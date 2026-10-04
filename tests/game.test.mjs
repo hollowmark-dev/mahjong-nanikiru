@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { scoreAnswer, rankOf, timeFactor } from "../docs/js/game/scoring.js";
+import { pickDailyMixed, OSHI_POSITIONS } from "../docs/js/game/daily.js";
+import { oshiRankOf } from "../docs/js/game/scoring.js";
+import { summarizeByType } from "../docs/js/game/session.js";
 import { jstDateString, dayIndex, addDays, dailyIndices, pickDaily, pickPractice, shortDate } from "../docs/js/game/daily.js";
 import { createSession, recordAnswer, summarize, buildShareText } from "../docs/js/game/session.js";
 import { normalizePracticeSec } from "../docs/js/game/storage.js";
@@ -341,4 +344,83 @@ test("時間切れは時間に関わらず0点、上限は150点", () => {
   assert.equal(scoreAnswer({ problem: p, tile: "5p", remainingMs: L, limitMs: L, timedOut: true }).points, 0);
   const best = scoreAnswer({ problem: p, tile: "5p", remainingMs: L, limitMs: L });
   assert.equal(best.points, 150);
+});
+
+function mkOshi(evs, over = {}) {
+  // evs: { 牌: ev }。best は ev 最大
+  const candidates = Object.entries(evs).map(([tile, ev]) => ({ tile, shanten: 1, ukeire: 1, ukeireTiles: [], dealIn: 0.05, agari: 0.1, lose: 0.1, ev }));
+  candidates.sort((a, b) => b.ev - a.ev);
+  return {
+    id: "o1", kind: "oshihiki", hand: ["1m", "2m", "3m", "4p", "5p", "6p", "7p", "7s", "8s", "9s", "1z", "1z", "5z"], draw: "9p",
+    doraIndicator: "3z", turn: 9, draws: 9, rivers: { self: [], shimo: [], toimen: [], kami: [] },
+    riichi: { seat: "toimen", index: 2 }, candidates, best: candidates[0].tile, answerType: "push", ...over,
+  };
+}
+
+test("押し引き採点: 損失ベース（0→100、750→50、1500以上→0）", () => {
+  const p = mkOshi({ "9p": 1000, "5z": 250, "1z": -500, "7s": -2000 });
+  const sc = (tile) => scoreAnswer({ problem: p, tile, remainingMs: 0, limitMs: L });
+  assert.equal(sc("9p").points, 100);
+  assert.equal(sc("9p").isBest, true);
+  assert.equal(sc("5z").loss, 750);
+  assert.equal(sc("5z").points, 50);
+  assert.equal(sc("1z").loss, 1500);
+  assert.equal(sc("1z").points, 0);
+  assert.equal(sc("7s").points, 0);
+  assert.equal(sc("7s").capped, true);
+  assert.equal(sc("7s").rank, "悪手");
+  // 時間係数と上限
+  assert.equal(scoreAnswer({ problem: p, tile: "9p", remainingMs: L, limitMs: L }).points, 150);
+});
+
+test("押し引き採点: ランク境界と同率最善", () => {
+  assert.equal(oshiRankOf(0), "最善");
+  assert.equal(oshiRankOf(150), "好手");
+  assert.equal(oshiRankOf(151), "次善");
+  assert.equal(oshiRankOf(450), "次善");
+  assert.equal(oshiRankOf(451), "悪手");
+  const p = mkOshi({ "9p": 500, "5z": 500, "1z": 0 });
+  assert.equal(scoreAnswer({ problem: p, tile: "5z", remainingMs: 0, limitMs: L }).isBest, true);
+});
+
+test("押し引き採点: 赤5は損失+300、時間切れは0点", () => {
+  const p = mkOshi({ "5p": 800, "9p": 800, "1z": 0 }, { draw: "0p" });
+  const red = scoreAnswer({ problem: p, tile: "0p", remainingMs: 0, limitMs: L });
+  assert.equal(red.redPenalty, true);
+  assert.equal(red.loss, 300);
+  assert.equal(red.points, 80);
+  assert.equal(red.isBest, false);
+  assert.equal(red.rank, "次善");
+  const to = scoreAnswer({ problem: p, tile: "0p", remainingMs: L, limitMs: L, timedOut: true });
+  assert.equal(to.points, 0);
+  assert.equal(to.rank, "時間切れ");
+  assert.equal(to.isBest, false);
+  assert.equal(to.redPenalty, false);
+});
+
+test("今日の10問（混在）: 速度7＋押し引き3、4・7・10問目が押し引き、重複なし、連続日で重ならない", () => {
+  const speed = Array.from({ length: 50 }, (_, i) => ({ id: `q${i}` }));
+  const oshi = Array.from({ length: 30 }, (_, i) => ({ id: `o${i}`, kind: "oshihiki" }));
+  assert.deepEqual(OSHI_POSITIONS, [3, 6, 9]);
+  let prev = null;
+  for (let d = 0; d < 20; d++) {
+    const date = addDays("2026-10-01", d);
+    const set = pickDailyMixed(speed, oshi, date);
+    assert.equal(set.length, 10);
+    assert.equal(new Set(set.map((p) => p.id)).size, 10);
+    set.forEach((p, i) => assert.equal(p.id.startsWith("o"), [3, 6, 9].includes(i), `${date} #${i + 1}`));
+    assert.deepEqual(set.map((p) => p.id), pickDailyMixed(speed, oshi, date).map((p) => p.id));
+    if (prev) assert.equal(set.filter((p) => prev.includes(p.id)).length, 0);
+    prev = set.map((p) => p.id);
+  }
+  // 30問・3問/日 → 10日で押し引きを使い切る
+  const used = new Set();
+  for (let d = 0; d < 10; d++) pickDailyMixed(speed, oshi, addDays("2026-10-01", d)).filter((p) => p.kind).forEach((p) => used.add(p.id));
+  assert.equal(used.size, 30);
+});
+
+test("種類別の最善数", () => {
+  const a = (type, isBest) => ({ type, isBest });
+  const r = summarizeByType([a("speed", true), a("speed", false), a("oshihiki", true), a(undefined, true)]);
+  assert.deepEqual(r, { speed: { best: 2, count: 3 }, oshihiki: { best: 1, count: 1 } });
 });

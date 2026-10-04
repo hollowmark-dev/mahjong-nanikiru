@@ -11,7 +11,8 @@ export function renderPlay(root, { problem, index, total, limitMs, mode, onAnswe
   const num = h("div", { class: "timer-num", "aria-hidden": "true" }, (limitMs / 1000).toFixed(1));
   let lastSec = limitSec;
   const hand = h("div", { class: "hand", role: "group", "aria-label": "手牌。切る牌を選んでください" });
-  const modeLabel = mode === "daily" ? "今日の10問" : mode === "retry" ? "再挑戦（練習扱い）" : "練習";
+  const modeLabel = mode === "daily" ? "今日の10問" : mode === "retry" ? "再挑戦（練習扱い）" : mode === "practice_oshi" ? "練習（押し引き）" : "練習";
+  const isOshi = problem.kind === "oshihiki";
 
   let t0 = null, done = false, raf = 0, timeoutId = 0;
 
@@ -56,6 +57,7 @@ export function renderPlay(root, { problem, index, total, limitMs, mode, onAnswe
   root.replaceChildren(
     h("div", { class: "play-head" },
       h("div", { class: "qno" }, `問 ${index + 1}/${total}`),
+      isOshi ? h("div", { class: "kind-tag" }, "押し引き") : null,
       h("div", { class: "mode-note" }, modeLabel),
     ),
     h("div", { class: "timer-wrap" },
@@ -63,7 +65,7 @@ export function renderPlay(root, { problem, index, total, limitMs, mode, onAnswe
       num),
     table.el,
     hand,
-    h("p", { class: "hint" }, "切る牌をタップ。右端が今引いた牌です。"),
+    h("p", { class: "hint" }, isOshi ? "リーチ者がいます。押すか降りるか、切る牌をタップ。" : "切る牌をタップ。右端が今引いた牌です。"),
   );
 
   function frame() {

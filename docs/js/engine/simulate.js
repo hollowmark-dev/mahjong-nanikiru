@@ -15,7 +15,7 @@ const RIVER_KEYS = ["self", "shimo", "toimen", "kami"];
 //   isEff:種類 → 有効牌か
 //   trans:ツモ t ごとの「シャンテン数が下がる打牌」の [打牌kind, 行き先節点] 一覧（kind 昇順）。遅延計算
 //   swap: テンパイ節点で有効牌でない t をツモったとき、t 以外を切ってテンパイを保つ打牌の一覧（待ち替え用）
-function createGraph() {
+export function createGraph() {
   const cache = new Map();
   const work = new Int8Array(34);
 
@@ -77,7 +77,7 @@ function createGraph() {
 }
 
 // 有効牌の残り枚数（見えている枚数は都度数える）
-function remainingCount(n, vis) {
+export function remainingCount(n, vis) {
   let sum = 0;
   const eff = n.eff;
   for (let i = 0; i < eff.length; i++) sum += 4 - vis[eff[i]];
@@ -85,7 +85,7 @@ function remainingCount(n, vis) {
 }
 
 // テンパイ節点の待ちに、河の種類（river）または extra が含まれるか
-function isFuriten(n, river, extra) {
+export function isFuriten(n, river, extra) {
   const eff = n.eff;
   for (let i = 0; i < eff.length; i++) {
     const k = eff[i];

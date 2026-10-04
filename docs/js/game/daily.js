@@ -38,25 +38,39 @@ export function shortDate(dateStr) {
 }
 
 // 問題 N 個の添字の固定順列
-export function permutation(n) {
+export function permutation(n, seed = PERM_SEED) {
   const perm = Array.from({ length: n }, (_, i) => i);
-  return shuffleInPlace(perm, createRng(PERM_SEED));
+  return shuffleInPlace(perm, createRng(seed));
 }
 
-// その日の問題の添字（長さ count）
-export function dailyIndices(n, dateStr, count = DAILY_COUNT) {
-  const perm = permutation(n);
+// その日の問題の添字（長さ count）。stride は 1日あたりに進める問題数
+export function dailyIndices(n, dateStr, count = DAILY_COUNT, stride = DAILY_COUNT, seed = PERM_SEED) {
+  const perm = permutation(n, seed);
   const d = dayIndex(dateStr);
   const out = [];
   for (let j = 0; j < count; j++) {
-    const k = (((DAILY_COUNT * d + j) % n) + n) % n;
+    const k = (((stride * d + j) % n) + n) % n;
     out.push(perm[k]);
   }
   return out;
 }
 
+// 速度問題だけの10問（旧仕様。テスト・互換用）
 export function pickDaily(problems, dateStr) {
   return dailyIndices(problems.length, dateStr).map((i) => problems[i]);
+}
+
+// 今日の10問 = 速度7問＋押し引き3問（4・7・10問目が押し引き）
+export const OSHI_SEED = 20261002;
+export const OSHI_COUNT = 3;
+export const OSHI_POSITIONS = [3, 6, 9]; // 0始まり
+export function pickDailyMixed(speed, oshi, dateStr) {
+  const sp = dailyIndices(speed.length, dateStr, DAILY_COUNT - OSHI_COUNT, DAILY_COUNT - OSHI_COUNT).map((i) => speed[i]);
+  const os = dailyIndices(oshi.length, dateStr, OSHI_COUNT, OSHI_COUNT, OSHI_SEED).map((i) => oshi[i]);
+  const out = [];
+  let si = 0, oi = 0;
+  for (let pos = 0; pos < DAILY_COUNT; pos++) out.push(OSHI_POSITIONS.includes(pos) ? os[oi++] : sp[si++]);
+  return out;
 }
 
 // 練習モード: 無作為に count 問（重複なし。問題が足りなければある分だけ）

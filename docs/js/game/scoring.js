@@ -28,8 +28,48 @@ export function isRedPenalty(problem, tile) {
   });
 }
 
+// ---- 押し引き問題（SPEC §11.7）: 期待収支 ev の損失ベース ----
+export const OSHI_SCALE = 1500;   // この損失で基礎点 0
+export const OSHI_RED_LOSS = 300; // 赤5を切る減点（損失に足す）
+
+export function isOshihiki(problem) {
+  return problem && problem.kind === "oshihiki";
+}
+
+export function oshiRankOf(loss) {
+  if (loss <= 0) return "最善";
+  if (loss <= 150) return "好手";
+  if (loss <= 450) return "次善";
+  return "悪手";
+}
+
+function scoreOshihiki({ problem, tile, remainingMs, limitMs, timedOut }) {
+  const kind = parseTile(tile).kind;
+  const kindStr = kindToStr(kind);
+  const cand = problem.candidates.find((c) => c.tile === kindStr);
+  if (!cand) throw new Error(`候補にない牌: ${tile}`);
+  const bestKind = parseTile(problem.best).kind;
+  const bestCand = problem.candidates.find((c) => c.tile === kindToStr(bestKind));
+  const rawLoss = Math.max(0, bestCand.ev - cand.ev);
+  const redPenalty = !timedOut && isRedPenalty(problem, tile);
+  const loss = rawLoss + (redPenalty ? OSHI_RED_LOSS : 0);
+  const isBest = !timedOut && loss <= 0;
+  const base = timedOut ? 0 : 100 * Math.max(0, 1 - loss / OSHI_SCALE);
+  const capped = !timedOut && loss >= OSHI_SCALE;
+  const remaining = timedOut ? 0 : Math.min(Math.max(remainingMs, 0), limitMs);
+  const factor = timeFactor(remaining, limitMs);
+  const points = timedOut ? 0 : Math.round(base * factor);
+  return {
+    type: "oshihiki", tile, kind: kindStr, isBest, timedOut,
+    ev: cand.ev, bestEv: bestCand.ev, rawLoss, loss, redPenalty, base, capped,
+    remainingMs: remaining, factor, points,
+    rank: timedOut ? "時間切れ" : oshiRankOf(loss),
+  };
+}
+
 // tile: 切った牌（"0p" などそのままの表記）。timedOut のときは呼び出し側が tile=draw を渡す
 export function scoreAnswer({ problem, tile, remainingMs, limitMs, timedOut = false }) {
+  if (isOshihiki(problem)) return scoreOshihiki({ problem, tile, remainingMs, limitMs, timedOut });
   const kind = parseTile(tile).kind;
   const kindStr = kindToStr(kind);
   const cand = problem.candidates.find((c) => c.tile === kindStr);

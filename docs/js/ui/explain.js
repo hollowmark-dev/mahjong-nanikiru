@@ -1,9 +1,12 @@
 // 解説画面（1問ごと）
 import { h, tileNode, pct, secText } from "./dom.js";
 import { createTable } from "./table.js";
+import { renderExplainOshi } from "./explainOshi.js";
 import { tileLabel, parseTile, kindToStr } from "../engine/tiles.js";
 
-export function renderExplain(root, { problem, index, total, answer, result, isLast, onNext }) {
+export function renderExplain(root, args) {
+  if (args.problem.kind === "oshihiki") return renderExplainOshi(root, args);
+  const { problem, index, total, answer, result, isLast, onNext } = args;
   // answer.index: 実際に押したボタンの位置（0〜12 が手牌、13 がツモ牌）
   const mineKind = kindToStr(parseTile(answer.tile).kind);
   const bestKind = kindToStr(parseTile(problem.best).kind);

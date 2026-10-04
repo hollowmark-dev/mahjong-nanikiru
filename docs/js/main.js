@@ -6,7 +6,7 @@ import { renderExplain } from "./ui/explain.js";
 import { renderResult } from "./ui/result.js";
 import { renderRankingScreen } from "./ui/rankingScreen.js";
 import { scoreAnswer } from "./game/scoring.js";
-import { jstDateString, pickDaily, pickPractice, addDays } from "./game/daily.js";
+import { jstDateString, pickDailyMixed, pickPractice, addDays } from "./game/daily.js";
 import { createSession, currentProblem, recordAnswer, toRecord, isFinished, DAILY_LIMIT_MS } from "./game/session.js";
 import { startProgress, isPlaying, isComplete, markShowing, resolveInterrupted, finalize, problemsOf, decideStart } from "./game/progress.js";
 import * as storage from "./game/storage.js";
@@ -14,7 +14,10 @@ import * as storage from "./game/storage.js";
 const root = document.getElementById("app");
 const status = document.getElementById("sr-status");
 let cleanup = null;
-let problems = null;
+let problems = null;      // 速度問題
+let oshiProblems = null;  // 押し引き問題
+let allProblems = null;   // 記録の id 引き用
+const dailySet = (date) => pickDailyMixed(problems, oshiProblems, date);
 
 function show(fn) {
   if (cleanup) { cleanup(); cleanup = null; }
@@ -33,7 +36,7 @@ function ctxNow() {
 function settle(date) {
   const rec = storage.loadDaily(date);
   if (!isPlaying(rec)) return;
-  const list = problemsOf(rec, problems) || pickDaily(problems, date);
+  const list = problemsOf(rec, allProblems) || dailySet(date);
   const changed = resolveInterrupted(rec, list);
   if (isComplete(rec)) { finalize(rec); storage.saveDaily(rec); }
   else if (changed) storage.saveDaily(rec);
@@ -62,7 +65,11 @@ function startGame(mode, sec, date) {
     question(createSession({ mode, date: d, limitMs: sec * 1000, problems: pickPractice(problems) }));
     return;
   }
-  const set = pickDaily(problems, d); // daily / retry は同じ10問
+  if (mode === "practice_oshi") {
+    question(createSession({ mode, date: d, limitMs: sec * 1000, problems: pickPractice(oshiProblems) }));
+    return;
+  }
+  const set = dailySet(d); // daily / retry は同じ10問
   if (mode === "retry") {
     question(createSession({ mode, date: d, limitMs: sec * 1000, problems: set }));
     return;
@@ -84,8 +91,8 @@ function resume(rec) {
   settle(rec.date);
   rec = storage.loadDaily(rec.date);
   if (!isPlaying(rec)) { showRecord(rec); return; }
-  let set = problemsOf(rec, problems);
-  if (!set) { set = pickDaily(problems, rec.date); rec.problemIds = set.map((p) => p.id); }
+  let set = problemsOf(rec, allProblems);
+  if (!set) { set = dailySet(rec.date); rec.problemIds = set.map((p) => p.id); }
   const session = createSession({ mode: "daily", date: rec.date, limitMs: rec.limitMs, problems: set, answers: rec.answers });
   session.record = rec;
   question(session);
@@ -127,11 +134,15 @@ function showError(msg) {
     h("div", { class: "actions" }, h("button", { type: "button", class: "btn", onclick: () => location.reload() }, "再読み込み"))));
 }
 
+async function loadJson(url) {
+  const res = await fetch(url, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`http ${res.status}`);
+  return res.json();
+}
+
 async function boot() {
   try {
-    const res = await fetch("data/problems.json", { cache: "no-cache" });
-    if (!res.ok) throw new Error(`http ${res.status}`);
-    const data = await res.json();
+    const data = await loadJson("data/problems.json");
     if (!data || data.version !== 2) throw new Error("問題データの版が違います");
     if (!Array.isArray(data.problems) || data.problems.length === 0) throw new Error("問題がありません");
     problems = data.problems;
@@ -139,6 +150,21 @@ async function boot() {
     showError("問題データを読み込めませんでした。");
     return;
   }
+  // 押し引き問題: 本物が無ければ sample を読む。どちらも読めなければエラー
+  // （今日の10問の構成が日によって変わるとランキングが不公平になるため）
+  try {
+    let data;
+    try { data = await loadJson("data/problems-oshihiki.json"); }
+    catch { data = await loadJson("data/problems-oshihiki.sample.json"); }
+    if (!data || data.version !== 1 || data.kind !== "oshihiki") throw new Error("押し引きデータの版が違います");
+    if (!Array.isArray(data.problems) || data.problems.length === 0) throw new Error("押し引き問題がありません");
+    // 問題ごとの kind はファイル全体の kind から付ける（採点・表示の分岐に使う）
+    oshiProblems = data.problems.map((p) => ({ ...p, kind: "oshihiki" }));
+  } catch (e) {
+    showError("押し引きの問題データを読み込めませんでした。");
+    return;
+  }
+  allProblems = [...problems, ...oshiProblems];
   go("home");
 }
 

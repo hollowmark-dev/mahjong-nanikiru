@@ -89,3 +89,34 @@ test("rivers: 各家 turn-1 枚、妥当な牌、手牌＋ドラ表示＋河で�
     counts.forEach((n, k) => assert.ok(n <= 4, `${p.id}: ${kindToStr(k)} が ${n} 枚`));
   }
 });
+
+// 押し引き問題（本物があれば本物、なければ sample）
+import { existsSync } from "node:fs";
+test("押し引き問題の形式（SPEC §11.2）", () => {
+  const real = new URL("../docs/data/problems-oshihiki.json", import.meta.url);
+  const file = existsSync(real) ? real : new URL("../docs/data/problems-oshihiki.sample.json", import.meta.url);
+  const data = JSON.parse(readFileSync(file, "utf8"));
+  assert.equal(data.version, 1);
+  assert.equal(data.kind, "oshihiki");
+  assert.ok(data.problems.length >= 1);
+  for (const p0 of data.problems) {
+    const p = { ...p0, kind: "oshihiki" }; // main.js と同じく、読み込み時に kind を付ける
+    assert.equal(p.hand.length, 13);
+    assert.deepEqual(p.hand, sortTiles(p.hand));
+    assert.ok(["push", "fold"].includes(p.answerType), p.id);
+    assert.ok(["shimo", "toimen", "kami"].includes(p.riichi.seat), p.id);
+    const river = p.rivers[p.riichi.seat];
+    assert.ok(p.riichi.index >= 0 && p.riichi.index < river.length, `${p.id} 宣言牌の位置`);
+    const kinds = new Set([...p.hand, p.draw].map((t) => parseTile(t).kind));
+    assert.equal(p.candidates.length, kinds.size, p.id);
+    for (const c of p.candidates) {
+      for (const k of ["dealIn", "agari", "lose"]) assert.ok(c[k] >= 0 && c[k] <= 1, `${p.id} ${k}`);
+      assert.ok(Number.isInteger(c.ev), `${p.id} ev`);
+    }
+    assert.equal(p.candidates.reduce((m, c) => (c.ev > m.ev ? c : m)).ev, p.candidates.find((c) => c.tile === kindToStr(parseTile(p.best).kind)).ev);
+    for (const t of [...p.hand, p.draw]) {
+      const r = scoreAnswer({ problem: p, tile: t, remainingMs: 5000, limitMs: 20000 });
+      assert.ok(r.points >= 0 && r.points <= 150);
+    }
+  }
+});

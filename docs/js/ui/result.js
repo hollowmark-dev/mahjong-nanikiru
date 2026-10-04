@@ -2,7 +2,7 @@
 import { h, tileNode, secText, mount } from "./dom.js";
 import * as ranking from "../ranking.js";
 import * as storage from "../game/storage.js";
-import { toSubmitAnswers, buildShareText } from "../game/session.js";
+import { toSubmitAnswers, buildShareText, summarizeByType } from "../game/session.js";
 import { tileLabel } from "../engine/tiles.js";
 import { shortDate } from "../game/daily.js";
 import { submitView, PENDING_MS } from "../game/progress.js";
@@ -14,7 +14,10 @@ const RANK_CLASS = { 最善: "r-best", 好手: "r-good", 次善: "r-ok", 悪手:
 export function renderResult(root, { record, ctx }) {
   const isDaily = record.mode === "daily";
   const rankingOn = ranking.isRankingEnabled();
-  const modeLabel = isDaily ? "今日の10問" : record.mode === "retry" ? "再挑戦（練習扱い）" : "練習";
+  const modeLabel = isDaily ? "今日の10問" : record.mode === "retry" ? "再挑戦（練習扱い）" : record.mode === "practice_oshi" ? "練習（押し引き）" : "練習";
+  const byType = summarizeByType(record.answers);
+  const typeLine = byType.oshihiki.count > 0 && byType.speed.count > 0
+    ? `速度 ${byType.speed.best}/${byType.speed.count} 最善 ／ 押し引き ${byType.oshihiki.best}/${byType.oshihiki.count} 最善` : "";
 
   const submitBox = h("p", { class: "msg submit", role: "status" });
   const shareBox = h("div", { class: "share-box" });
@@ -104,6 +107,7 @@ export function renderResult(root, { record, ctx }) {
         h("dt", {}, "最善"), h("dd", {}, `${record.bestCount}/${record.count}`),
         h("dt", {}, "平均回答時間"), h("dd", {}, secText(record.avgTimeMs)),
       ),
+      typeLine ? h("p", { class: "type-line" }, typeLine) : null,
       submitBox,
     ),
     h("section", { class: "card" }, h("h2", {}, "各問の結果"), list),

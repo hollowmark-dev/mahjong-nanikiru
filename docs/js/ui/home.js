@@ -25,7 +25,7 @@ export function renderHome(root, ctx) {
 
   const daily = h("section", { class: "card" },
     h("h2", {}, `今日の10問（${shortDate(today)}）`),
-    h("p", { class: "note" }, "全員同じ10問・制限時間20秒。ランキングは1日1回です。"),
+    h("p", { class: "note" }, "全員同じ10問（何切る7問＋押し引き3問）・制限時間20秒。ランキングは1日1回です。"),
   );
   if (record && record.status === "playing") {
     daily.append(
@@ -73,18 +73,17 @@ export function renderHome(root, ctx) {
     r.addEventListener("change", () => storage.setPracticeSec(s));
     return h("label", { class: "chip", for: id }, r, h("span", {}, `${s}秒`));
   });
+  const startPractice = (mode) => {
+    const sel = root.querySelector('input[name="sec"]:checked');
+    ctx.startGame(mode, sel ? Number(sel.value) : storage.DEFAULT_PRACTICE_SEC);
+  };
   const practice = h("section", { class: "card" },
     h("h2", {}, "練習モード"),
     h("p", { class: "note" }, "無作為に10問。ランキングには送信されません。"),
     h("div", { class: "chips", role: "radiogroup", "aria-label": "制限時間" }, radios),
     h("div", { class: "actions" },
-      h("button", {
-        type: "button", class: "btn",
-        onclick: () => {
-          const sel = root.querySelector('input[name="sec"]:checked');
-          ctx.startGame("practice", sel ? Number(sel.value) : storage.DEFAULT_PRACTICE_SEC);
-        },
-      }, "練習を始める")),
+      h("button", { type: "button", class: "btn", onclick: () => startPractice("practice") }, "何切る（速度）を練習"),
+      h("button", { type: "button", class: "btn", onclick: () => startPractice("practice_oshi") }, "押し引きを練習")),
   );
 
   const how = h("details", { class: "card how" },
@@ -98,6 +97,8 @@ export function renderHome(root, ctx) {
       h("li", {}, "基礎点に、残り時間が多いほど最大1.5倍の時間係数がかかります（最大150点）。時間切れは0点です。"),
       h("li", {}, "赤5は残すほうが有利です。通常の5があるのに赤5を切ると q が0.9倍になります。"),
       h("li", {}, "時間切れは0点です（解説ではツモ切りしたものとして表示）。解説を見ている間はタイマーが止まります。"),
+      h("li", {}, "押し引き（4・7・10問目）: 他家の1人がリーチしています。自分は親・東1局・全員25000点の想定で、押すか降りるかを選びます。"),
+      h("li", {}, "押し引きは「期待収支（点）」で評価します。最善との差（損失）が小さいほど高得点で、1500点以上損すると0点です。リーチ者の手は、見えている情報と矛盾しない形を無作為に作って見積もっています。"),
       h("li", {}, "リーチ麻雀（赤ドラ3枚・門前のみ）の想定です。他家の手牌は未知として扱い、鳴きや押し引きは考えません。"),
     ),
   );

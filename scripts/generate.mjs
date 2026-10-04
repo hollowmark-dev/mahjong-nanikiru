@@ -29,9 +29,9 @@ const FILTER = {
 };
 
 // 牌ID 0..135: kind = id>>2、赤は各赤種類の (id&3)==0
-const idKind = (id) => id >> 2;
-const idRed = (id) => RED_KINDS.has(id >> 2) && (id & 3) === 0;
-const idStr = (id) => tileToStr({ kind: idKind(id), red: idRed(id) });
+export const idKind = (id) => id >> 2;
+export const idRed = (id) => RED_KINDS.has(id >> 2) && (id & 3) === 0;
+export const idStr = (id) => tileToStr({ kind: idKind(id), red: idRed(id) });
 
 const SEATS = ["self", "shimo", "toimen", "kami"];
 
@@ -50,7 +50,7 @@ function discardPenalty(k, counts, hand, doraKind, seat) {
   if (counts[k] === 1 && (k === doraKind || hasRed)) return 1;
   return 0;
 }
-function chooseDiscard(hand, visible, rng, doraKind, seat) {
+export function chooseDiscard(hand, visible, rng, doraKind, seat) {
   const counts = new Array(34).fill(0);
   for (const id of hand) counts[idKind(id)]++;
   const opts = discardOptions(counts, visible);
@@ -240,7 +240,8 @@ function toCountsKinds(strs) {
 }
 
 // ---------------- worker ----------------
-if (!isMainThread) {
+// 他のスクリプト（generate-oshihiki.mjs）の worker から import されたときは動かない
+if (!isMainThread && workerData && workerData.script === "generate") {
   const { seed, trials } = workerData;
   FURITEN_CHECK = !!workerData.furitenCheck;
   parentPort.on("message", (msg) => {
@@ -330,7 +331,7 @@ async function main() {
 
   const self = fileURLToPath(import.meta.url);
   for (let i = 0; i < args.threads; i++) {
-    const w = new Worker(self, { workerData: { seed: args.seed, trials: args.trials, furitenCheck: args["furiten-check"] > 0 } });
+    const w = new Worker(self, { workerData: { script: "generate", seed: args.seed, trials: args.trials, furitenCheck: args["furiten-check"] > 0 } });
     w.on("message", (out) => {
       active--;
       for (const r of out) results.set(r.a, r);

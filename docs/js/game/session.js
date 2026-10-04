@@ -22,7 +22,8 @@ export function isFinished(session) {
 export function makeAnswer({ problem, tile, timeMs, result }) {
   return {
     id: problem.id, tile, timeMs: Math.round(timeMs), points: result.points,
-    q: result.q, rank: result.rank, isBest: result.isBest, timedOut: result.timedOut,
+    type: result.type === "oshihiki" ? "oshihiki" : "speed",
+    q: result.q, loss: result.loss, rank: result.rank, isBest: result.isBest, timedOut: result.timedOut,
   };
 }
 
@@ -59,4 +60,15 @@ export function toSubmitAnswers(record) {
 // 共有テキスト（SPEC §8-4）
 export function buildShareText({ date, score, bestCount, count = 10, url }) {
   return `何切る道場 ${shortDate(date)} ${score}点 最善${bestCount}/${count} #何切る道場 ${url}`;
+}
+
+// 種類別の最善数: { speed: {best, count}, oshihiki: {best, count} }
+export function summarizeByType(answers) {
+  const out = { speed: { best: 0, count: 0 }, oshihiki: { best: 0, count: 0 } };
+  for (const a of answers) {
+    const t = a.type === "oshihiki" ? out.oshihiki : out.speed;
+    t.count++;
+    if (a.isBest) t.best++;
+  }
+  return out;
 }

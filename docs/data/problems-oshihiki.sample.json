@@ -1,0 +1,3087 @@
+{
+ "version": 1,
+ "kind": "oshihiki",
+ "sample": true,
+ "generatedAt": "2026-10-04T12:00:00+09:00",
+ "params": {
+  "trials": 0,
+  "maxTurn": 18,
+  "seed": 0,
+  "model": "oshihiki-sample"
+ },
+ "problems": [
+  {
+   "id": "o00001",
+   "hand": [
+    "2m",
+    "3m",
+    "4m",
+    "4p",
+    "0p",
+    "6p",
+    "6p",
+    "8p",
+    "3s",
+    "4s",
+    "5s",
+    "7z",
+    "7z"
+   ],
+   "draw": "8s",
+   "doraIndicator": "3z",
+   "turn": 9,
+   "draws": 9,
+   "rivers": {
+    "self": [
+     "8s",
+     "8m",
+     "5z",
+     "3p",
+     "6z",
+     "9m",
+     "6m",
+     "2s"
+    ],
+    "shimo": [
+     "7z",
+     "6z",
+     "6s",
+     "7m",
+     "2s",
+     "3m",
+     "7s",
+     "9p"
+    ],
+    "toimen": [
+     "1s",
+     "9m",
+     "5p",
+     "7p",
+     "4s",
+     "5p",
+     "3z",
+     "4s"
+    ],
+    "kami": [
+     "2z",
+     "5m",
+     "9s",
+     "9s",
+     "3z",
+     "6m",
+     "6m",
+     "8s"
+    ]
+   },
+   "riichi": {
+    "seat": "shimo",
+    "index": 4
+   },
+   "candidates": [
+    {
+     "tile": "8s",
+     "shanten": 0,
+     "ukeire": 3,
+     "ukeireTiles": [
+      "7p"
+     ],
+     "dealIn": 0.0705,
+     "agari": 0.409,
+     "lose": 0.2905,
+     "ev": 1394
+    },
+    {
+     "tile": "8p",
+     "shanten": 1,
+     "ukeire": 25,
+     "ukeireTiles": [
+      "3p",
+      "4p",
+      "5p",
+      "6p",
+      "7p",
+      "8p",
+      "6s",
+      "7s",
+      "8s",
+      "9s",
+      "7z"
+     ],
+     "dealIn": 0.0718,
+     "agari": 0.2506,
+     "lose": 0.2718,
+     "ev": 302
+    },
+    {
+     "tile": "3m",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "3m",
+      "7p"
+     ],
+     "dealIn": 0.0022,
+     "agari": 0.1497,
+     "lose": 0.2023,
+     "ev": -55
+    },
+    {
+     "tile": "7z",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "7p",
+      "8s",
+      "7z"
+     ],
+     "dealIn": 0.003,
+     "agari": 0.1495,
+     "lose": 0.203,
+     "ev": -60
+    },
+    {
+     "tile": "6p",
+     "shanten": 1,
+     "ukeire": 24,
+     "ukeireTiles": [
+      "3p",
+      "6p",
+      "7p",
+      "8p",
+      "9p",
+      "6s",
+      "7s",
+      "8s",
+      "9s",
+      "7z"
+     ],
+     "dealIn": 0.1227,
+     "agari": 0.2316,
+     "lose": 0.3227,
+     "ev": -143
+    },
+    {
+     "tile": "2m",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "7p"
+     ],
+     "dealIn": 0.0728,
+     "agari": 0.1613,
+     "lose": 0.2728,
+     "ev": -382
+    },
+    {
+     "tile": "3s",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "7p",
+      "3s",
+      "6s"
+     ],
+     "dealIn": 0.093,
+     "agari": 0.1578,
+     "lose": 0.293,
+     "ev": -528
+    },
+    {
+     "tile": "4m",
+     "shanten": 1,
+     "ukeire": 10,
+     "ukeireTiles": [
+      "1m",
+      "4m",
+      "7p"
+     ],
+     "dealIn": 0.1217,
+     "agari": 0.1581,
+     "lose": 0.3217,
+     "ev": -696
+    },
+    {
+     "tile": "4p",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "4p",
+      "7p"
+     ],
+     "dealIn": 0.1205,
+     "agari": 0.1372,
+     "lose": 0.3205,
+     "ev": -848
+    },
+    {
+     "tile": "5s",
+     "shanten": 1,
+     "ukeire": 8,
+     "ukeireTiles": [
+      "7p",
+      "2s",
+      "5s"
+     ],
+     "dealIn": 0.142,
+     "agari": 0.1441,
+     "lose": 0.342,
+     "ev": -922
+    },
+    {
+     "tile": "4s",
+     "shanten": 1,
+     "ukeire": 4,
+     "ukeireTiles": [
+      "7p",
+      "4s"
+     ],
+     "dealIn": 0.1225,
+     "agari": 0.1264,
+     "lose": 0.3225,
+     "ev": -941
+    },
+    {
+     "tile": "5p",
+     "shanten": 1,
+     "ukeire": 4,
+     "ukeireTiles": [
+      "5p",
+      "7p"
+     ],
+     "dealIn": 0.14,
+     "agari": 0.1238,
+     "lose": 0.34,
+     "ev": -1065
+    }
+   ],
+   "best": "8s",
+   "answerType": "push"
+  },
+  {
+   "id": "o00002",
+   "hand": [
+    "1m",
+    "1m",
+    "3m",
+    "3m",
+    "5p",
+    "5p",
+    "8p",
+    "8p",
+    "2s",
+    "2s",
+    "7s",
+    "7s",
+    "6z"
+   ],
+   "draw": "3p",
+   "doraIndicator": "9p",
+   "turn": 8,
+   "draws": 10,
+   "rivers": {
+    "self": [
+     "8p",
+     "4z",
+     "7z",
+     "9s",
+     "4m",
+     "9m",
+     "6z"
+    ],
+    "shimo": [
+     "1m",
+     "1z",
+     "6z",
+     "1z",
+     "2s",
+     "4m",
+     "4z"
+    ],
+    "toimen": [
+     "4z",
+     "1z",
+     "7m",
+     "7s",
+     "2z",
+     "2m",
+     "7m"
+    ],
+    "kami": [
+     "9s",
+     "3z",
+     "6s",
+     "4s",
+     "9s",
+     "1p",
+     "4s"
+    ]
+   },
+   "riichi": {
+    "seat": "toimen",
+    "index": 4
+   },
+   "candidates": [
+    {
+     "tile": "6z",
+     "shanten": 0,
+     "ukeire": 3,
+     "ukeireTiles": [
+      "3p"
+     ],
+     "dealIn": 0.023,
+     "agari": 0.4299,
+     "lose": 0.243,
+     "ev": 1835
+    },
+    {
+     "tile": "3p",
+     "shanten": 0,
+     "ukeire": 1,
+     "ukeireTiles": [
+      "6z"
+     ],
+     "dealIn": 0.0905,
+     "agari": 0.3638,
+     "lose": 0.3105,
+     "ev": 933
+    },
+    {
+     "tile": "7s",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "3p",
+      "7s",
+      "6z"
+     ],
+     "dealIn": 0.0005,
+     "agari": 0.1499,
+     "lose": 0.2005,
+     "ev": -43
+    },
+    {
+     "tile": "1m",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "1m",
+      "3p",
+      "6z"
+     ],
+     "dealIn": 0.0528,
+     "agari": 0.1421,
+     "lose": 0.2528,
+     "ev": -410
+    },
+    {
+     "tile": "8p",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "3p",
+      "8p",
+      "6z"
+     ],
+     "dealIn": 0.0713,
+     "agari": 0.1393,
+     "lose": 0.2712,
+     "ev": -541
+    },
+    {
+     "tile": "2s",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "3p",
+      "2s",
+      "6z"
+     ],
+     "dealIn": 0.073,
+     "agari": 0.1391,
+     "lose": 0.273,
+     "ev": -553
+    },
+    {
+     "tile": "3m",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "3m",
+      "3p",
+      "6z"
+     ],
+     "dealIn": 0.0917,
+     "agari": 0.1417,
+     "lose": 0.2918,
+     "ev": -644
+    },
+    {
+     "tile": "5p",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "3p",
+      "5p",
+      "6z"
+     ],
+     "dealIn": 0.1428,
+     "agari": 0.1337,
+     "lose": 0.3427,
+     "ev": -1005
+    }
+   ],
+   "best": "6z",
+   "answerType": "push"
+  },
+  {
+   "id": "o00003",
+   "hand": [
+    "4m",
+    "5m",
+    "6m",
+    "3p",
+    "4p",
+    "5p",
+    "7p",
+    "8p",
+    "9p",
+    "1s",
+    "2s",
+    "5z",
+    "5z"
+   ],
+   "draw": "7z",
+   "doraIndicator": "2m",
+   "turn": 10,
+   "draws": 8,
+   "rivers": {
+    "self": [
+     "5z",
+     "4p",
+     "6z",
+     "3z",
+     "1z",
+     "4z",
+     "4m",
+     "2z",
+     "5p"
+    ],
+    "shimo": [
+     "1s",
+     "1m",
+     "5s",
+     "9s",
+     "4z",
+     "1p",
+     "5m",
+     "1z",
+     "7s"
+    ],
+    "toimen": [
+     "7p",
+     "1m",
+     "2z",
+     "7z",
+     "2z",
+     "9p",
+     "9s",
+     "8s",
+     "9p"
+    ],
+    "kami": [
+     "5z",
+     "3z",
+     "2s",
+     "2s",
+     "6z",
+     "7s",
+     "5p",
+     "7s",
+     "2p"
+    ]
+   },
+   "riichi": {
+    "seat": "kami",
+    "index": 3
+   },
+   "candidates": [
+    {
+     "tile": "7z",
+     "shanten": 0,
+     "ukeire": 4,
+     "ukeireTiles": [
+      "3s"
+     ],
+     "dealIn": 0.022,
+     "agari": 0.4499,
+     "lose": 0.242,
+     "ev": 1992
+    },
+    {
+     "tile": "2s",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "1s",
+      "2s",
+      "3s",
+      "7z"
+     ],
+     "dealIn": 0.0025,
+     "agari": 0.1736,
+     "lose": 0.2025,
+     "ev": 125
+    },
+    {
+     "tile": "5p",
+     "shanten": 1,
+     "ukeire": 8,
+     "ukeireTiles": [
+      "2p",
+      "5p",
+      "3s"
+     ],
+     "dealIn": 0.0022,
+     "agari": 0.1676,
+     "lose": 0.2023,
+     "ev": 82
+    },
+    {
+     "tile": "5z",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "3s",
+      "7z"
+     ],
+     "dealIn": 0.003,
+     "agari": 0.1555,
+     "lose": 0.203,
+     "ev": -14
+    },
+    {
+     "tile": "1s",
+     "shanten": 1,
+     "ukeire": 13,
+     "ukeireTiles": [
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.053,
+     "agari": 0.1875,
+     "lose": 0.253,
+     "ev": -66
+    },
+    {
+     "tile": "9p",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "6p",
+      "9p",
+      "3s"
+     ],
+     "dealIn": 0.0503,
+     "agari": 0.1653,
+     "lose": 0.2503,
+     "ev": -220
+    },
+    {
+     "tile": "3p",
+     "shanten": 1,
+     "ukeire": 11,
+     "ukeireTiles": [
+      "3p",
+      "6p",
+      "3s"
+     ],
+     "dealIn": 0.09,
+     "agari": 0.1693,
+     "lose": 0.29,
+     "ev": -425
+    },
+    {
+     "tile": "8p",
+     "shanten": 1,
+     "ukeire": 7,
+     "ukeireTiles": [
+      "8p",
+      "3s"
+     ],
+     "dealIn": 0.0708,
+     "agari": 0.1505,
+     "lose": 0.2708,
+     "ev": -453
+    },
+    {
+     "tile": "7p",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "7p",
+      "3s"
+     ],
+     "dealIn": 0.0912,
+     "agari": 0.1418,
+     "lose": 0.2913,
+     "ev": -640
+    },
+    {
+     "tile": "6m",
+     "shanten": 1,
+     "ukeire": 11,
+     "ukeireTiles": [
+      "3m",
+      "6m",
+      "3s"
+     ],
+     "dealIn": 0.123,
+     "agari": 0.1631,
+     "lose": 0.323,
+     "ev": -665
+    },
+    {
+     "tile": "4m",
+     "shanten": 1,
+     "ukeire": 10,
+     "ukeireTiles": [
+      "4m",
+      "7m",
+      "3s"
+     ],
+     "dealIn": 0.1207,
+     "agari": 0.1583,
+     "lose": 0.3207,
+     "ev": -689
+    },
+    {
+     "tile": "4p",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "4p",
+      "3s"
+     ],
+     "dealIn": 0.1227,
+     "agari": 0.1369,
+     "lose": 0.3227,
+     "ev": -863
+    },
+    {
+     "tile": "5m",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "5m",
+      "3s"
+     ],
+     "dealIn": 0.1403,
+     "agari": 0.1341,
+     "lose": 0.3403,
+     "ev": -988
+    }
+   ],
+   "best": "7z",
+   "answerType": "push"
+  },
+  {
+   "id": "o00004",
+   "hand": [
+    "3m",
+    "4m",
+    "0m",
+    "0p",
+    "6p",
+    "7p",
+    "1s",
+    "2s",
+    "3s",
+    "4s",
+    "4s",
+    "7z",
+    "7z"
+   ],
+   "draw": "5p",
+   "doraIndicator": "8s",
+   "turn": 7,
+   "draws": 11,
+   "rivers": {
+    "self": [
+     "1m",
+     "9p",
+     "8p",
+     "4m",
+     "9p",
+     "3p"
+    ],
+    "shimo": [
+     "7z",
+     "1m",
+     "4m",
+     "3m",
+     "4p",
+     "2s"
+    ],
+    "toimen": [
+     "3z",
+     "3z",
+     "4z",
+     "1s",
+     "8s",
+     "9p"
+    ],
+    "kami": [
+     "3z",
+     "5z",
+     "2z",
+     "6s",
+     "4p",
+     "4p"
+    ]
+   },
+   "riichi": {
+    "seat": "shimo",
+    "index": 3
+   },
+   "candidates": [
+    {
+     "tile": "7z",
+     "shanten": 1,
+     "ukeire": 18,
+     "ukeireTiles": [
+      "3p",
+      "4p",
+      "5p",
+      "6p",
+      "7p",
+      "8p",
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.0015,
+     "agari": 0.2277,
+     "lose": 0.2015,
+     "ev": 542
+    },
+    {
+     "tile": "1s",
+     "shanten": 1,
+     "ukeire": 32,
+     "ukeireTiles": [
+      "3p",
+      "4p",
+      "5p",
+      "6p",
+      "7p",
+      "8p",
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "7z"
+     ],
+     "dealIn": 0.0775,
+     "agari": 0.2491,
+     "lose": 0.2775,
+     "ev": 257
+    },
+    {
+     "tile": "3m",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "3m",
+      "6m",
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.0008,
+     "agari": 0.1739,
+     "lose": 0.2008,
+     "ev": 137
+    },
+    {
+     "tile": "5p",
+     "shanten": 0,
+     "ukeire": 3,
+     "ukeireTiles": [
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.2118,
+     "agari": 0.3468,
+     "lose": 0.4318,
+     "ev": 89
+    },
+    {
+     "tile": "2s",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "2s",
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.002,
+     "agari": 0.1497,
+     "lose": 0.202,
+     "ev": -53
+    },
+    {
+     "tile": "4m",
+     "shanten": 1,
+     "ukeire": 4,
+     "ukeireTiles": [
+      "4m",
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.0003,
+     "agari": 0.144,
+     "lose": 0.2003,
+     "ev": -87
+    },
+    {
+     "tile": "4s",
+     "shanten": 1,
+     "ukeire": 32,
+     "ukeireTiles": [
+      "3p",
+      "4p",
+      "5p",
+      "6p",
+      "7p",
+      "8p",
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "7z"
+     ],
+     "dealIn": 0.181,
+     "agari": 0.2211,
+     "lose": 0.381,
+     "ev": -567
+    },
+    {
+     "tile": "7p",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "4p",
+      "5p",
+      "7p",
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.1358,
+     "agari": 0.1504,
+     "lose": 0.3357,
+     "ev": -838
+    },
+    {
+     "tile": "3s",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "3s",
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.1365,
+     "agari": 0.1347,
+     "lose": 0.3365,
+     "ev": -961
+    },
+    {
+     "tile": "6p",
+     "shanten": 1,
+     "ukeire": 8,
+     "ukeireTiles": [
+      "5p",
+      "6p",
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.1812,
+     "agari": 0.1375,
+     "lose": 0.3812,
+     "ev": -1203
+    },
+    {
+     "tile": "5m",
+     "shanten": 1,
+     "ukeire": 10,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "4s",
+      "7z"
+     ],
+     "dealIn": 0.213,
+     "agari": 0.1417,
+     "lose": 0.413,
+     "ev": -1359
+    }
+   ],
+   "best": "7z",
+   "answerType": "fold"
+  },
+  {
+   "id": "o00005",
+   "hand": [
+    "3m",
+    "4m",
+    "7m",
+    "8m",
+    "4p",
+    "5p",
+    "6p",
+    "2s",
+    "3s",
+    "5s",
+    "5s",
+    "8s",
+    "8s"
+   ],
+   "draw": "6m",
+   "doraIndicator": "5z",
+   "turn": 11,
+   "draws": 7,
+   "rivers": {
+    "self": [
+     "7z",
+     "6m",
+     "9m",
+     "4p",
+     "4m",
+     "1m",
+     "9s",
+     "3z",
+     "1z",
+     "1m"
+    ],
+    "shimo": [
+     "1s",
+     "4p",
+     "9m",
+     "1m",
+     "9m",
+     "5m",
+     "7s",
+     "1s",
+     "4m",
+     "3s"
+    ],
+    "toimen": [
+     "8s",
+     "5z",
+     "7s",
+     "9p",
+     "8p",
+     "9p",
+     "9p",
+     "2p",
+     "6p",
+     "7m"
+    ],
+    "kami": [
+     "3p",
+     "3z",
+     "3s",
+     "1p",
+     "8m",
+     "3m",
+     "2m",
+     "6z",
+     "9s",
+     "8p"
+    ]
+   },
+   "riichi": {
+    "seat": "toimen",
+    "index": 5
+   },
+   "candidates": [
+    {
+     "tile": "8s",
+     "shanten": 1,
+     "ukeire": 12,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "1s",
+      "4s"
+     ],
+     "dealIn": 0.0018,
+     "agari": 0.1917,
+     "lose": 0.2018,
+     "ev": 267
+    },
+    {
+     "tile": "6p",
+     "shanten": 2,
+     "ukeire": 20,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "3p",
+      "6p",
+      "1s",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.0008,
+     "agari": 0.03,
+     "lose": 0.0508,
+     "ev": -71
+    },
+    {
+     "tile": "7m",
+     "shanten": 2,
+     "ukeire": 17,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "7m",
+      "1s",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.0015,
+     "agari": 0.03,
+     "lose": 0.0515,
+     "ev": -75
+    },
+    {
+     "tile": "2s",
+     "shanten": 1,
+     "ukeire": 13,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.1275,
+     "agari": 0.1728,
+     "lose": 0.3275,
+     "ev": -619
+    },
+    {
+     "tile": "8m",
+     "shanten": 2,
+     "ukeire": 17,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "8m",
+      "1s",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.127,
+     "agari": 0.03,
+     "lose": 0.177,
+     "ev": -816
+    },
+    {
+     "tile": "3m",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "1s",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.1623,
+     "agari": 0.1458,
+     "lose": 0.3623,
+     "ev": -1029
+    },
+    {
+     "tile": "3s",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.163,
+     "agari": 0.1456,
+     "lose": 0.363,
+     "ev": -1034
+    },
+    {
+     "tile": "4p",
+     "shanten": 2,
+     "ukeire": 20,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "4p",
+      "7p",
+      "1s",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.2177,
+     "agari": 0.03,
+     "lose": 0.2677,
+     "ev": -1351
+    },
+    {
+     "tile": "6m",
+     "shanten": 2,
+     "ukeire": 18,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "6m",
+      "9m",
+      "1s",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.218,
+     "agari": 0.03,
+     "lose": 0.268,
+     "ev": -1352
+    },
+    {
+     "tile": "4m",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "1s",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.219,
+     "agari": 0.1359,
+     "lose": 0.419,
+     "ev": -1438
+    },
+    {
+     "tile": "5p",
+     "shanten": 2,
+     "ukeire": 18,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "5p",
+      "1s",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.2533,
+     "agari": 0.03,
+     "lose": 0.3033,
+     "ev": -1561
+    },
+    {
+     "tile": "5s",
+     "shanten": 1,
+     "ukeire": 12,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "1s",
+      "4s"
+     ],
+     "dealIn": 0.252,
+     "agari": 0.1436,
+     "lose": 0.452,
+     "ev": -1575
+    }
+   ],
+   "best": "8s",
+   "answerType": "fold"
+  },
+  {
+   "id": "o00006",
+   "hand": [
+    "2m",
+    "2m",
+    "3m",
+    "4m",
+    "0p",
+    "6p",
+    "7p",
+    "3s",
+    "3s",
+    "4s",
+    "5s",
+    "7s",
+    "8s"
+   ],
+   "draw": "1z",
+   "doraIndicator": "6m",
+   "turn": 10,
+   "draws": 8,
+   "rivers": {
+    "self": [
+     "7z",
+     "1m",
+     "2m",
+     "4z",
+     "8m",
+     "6z",
+     "6m",
+     "2p",
+     "9s"
+    ],
+    "shimo": [
+     "4s",
+     "5m",
+     "4s",
+     "4m",
+     "5p",
+     "2z",
+     "6p",
+     "5p",
+     "9s"
+    ],
+    "toimen": [
+     "4z",
+     "9p",
+     "9p",
+     "3z",
+     "7s",
+     "2s",
+     "2p",
+     "6m",
+     "7m"
+    ],
+    "kami": [
+     "1z",
+     "1s",
+     "1s",
+     "6s",
+     "6p",
+     "2s",
+     "6z",
+     "8m",
+     "3m"
+    ]
+   },
+   "riichi": {
+    "seat": "kami",
+    "index": 3
+   },
+   "candidates": [
+    {
+     "tile": "1z",
+     "shanten": 1,
+     "ukeire": 11,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "3s",
+      "6s",
+      "9s"
+     ],
+     "dealIn": 0.0003,
+     "agari": 0.186,
+     "lose": 0.2003,
+     "ev": 232
+    },
+    {
+     "tile": "6p",
+     "shanten": 2,
+     "ukeire": 14,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "6p",
+      "3s",
+      "6s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.0003,
+     "agari": 0.03,
+     "lose": 0.0503,
+     "ev": -68
+    },
+    {
+     "tile": "3m",
+     "shanten": 2,
+     "ukeire": 26,
+     "ukeireTiles": [
+      "2m",
+      "3m",
+      "4m",
+      "5m",
+      "6m",
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.003,
+     "agari": 0.03,
+     "lose": 0.053,
+     "ev": -84
+    },
+    {
+     "tile": "2m",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "3s",
+      "6s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.1123,
+     "agari": 0.1545,
+     "lose": 0.3123,
+     "ev": -668
+    },
+    {
+     "tile": "8s",
+     "shanten": 2,
+     "ukeire": 33,
+     "ukeireTiles": [
+      "1m",
+      "2m",
+      "3m",
+      "4m",
+      "5m",
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "7s",
+      "8s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.1133,
+     "agari": 0.03,
+     "lose": 0.1633,
+     "ev": -735
+    },
+    {
+     "tile": "3s",
+     "shanten": 1,
+     "ukeire": 11,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "6s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.1445,
+     "agari": 0.1591,
+     "lose": 0.3445,
+     "ev": -823
+    },
+    {
+     "tile": "7s",
+     "shanten": 2,
+     "ukeire": 33,
+     "ukeireTiles": [
+      "1m",
+      "2m",
+      "3m",
+      "4m",
+      "5m",
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "7s",
+      "8s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.1457,
+     "agari": 0.03,
+     "lose": 0.1957,
+     "ev": -926
+    },
+    {
+     "tile": "7p",
+     "shanten": 2,
+     "ukeire": 20,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "4p",
+      "7p",
+      "3s",
+      "6s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.147,
+     "agari": 0.03,
+     "lose": 0.197,
+     "ev": -933
+    },
+    {
+     "tile": "4s",
+     "shanten": 2,
+     "ukeire": 29,
+     "ukeireTiles": [
+      "1m",
+      "2m",
+      "3m",
+      "4m",
+      "5m",
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "7s",
+      "8s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.192,
+     "agari": 0.03,
+     "lose": 0.242,
+     "ev": -1200
+    },
+    {
+     "tile": "4m",
+     "shanten": 2,
+     "ukeire": 28,
+     "ukeireTiles": [
+      "1m",
+      "2m",
+      "3m",
+      "4m",
+      "5m",
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.1945,
+     "agari": 0.03,
+     "lose": 0.2445,
+     "ev": -1214
+    },
+    {
+     "tile": "5p",
+     "shanten": 2,
+     "ukeire": 18,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "5p",
+      "8p",
+      "3s",
+      "6s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.2248,
+     "agari": 0.03,
+     "lose": 0.2748,
+     "ev": -1393
+    },
+    {
+     "tile": "5s",
+     "shanten": 2,
+     "ukeire": 26,
+     "ukeireTiles": [
+      "1m",
+      "2m",
+      "3m",
+      "4m",
+      "5m",
+      "2s",
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.2268,
+     "agari": 0.03,
+     "lose": 0.2768,
+     "ev": -1404
+    }
+   ],
+   "best": "1z",
+   "answerType": "fold"
+  },
+  {
+   "id": "o00007",
+   "hand": [
+    "6m",
+    "7m",
+    "8m",
+    "8m",
+    "2p",
+    "3p",
+    "4p",
+    "5s",
+    "5s",
+    "0s",
+    "6s",
+    "1z",
+    "1z"
+   ],
+   "draw": "9p",
+   "doraIndicator": "5s",
+   "turn": 9,
+   "draws": 9,
+   "rivers": {
+    "self": [
+     "9m",
+     "1p",
+     "1p",
+     "6p",
+     "5m",
+     "8m",
+     "2p",
+     "1s"
+    ],
+    "shimo": [
+     "1z",
+     "2z",
+     "5p",
+     "2s",
+     "6s",
+     "7p",
+     "4p",
+     "7z"
+    ],
+    "toimen": [
+     "2s",
+     "5m",
+     "2z",
+     "6z",
+     "2p",
+     "5p",
+     "1m",
+     "4m"
+    ],
+    "kami": [
+     "5m",
+     "5z",
+     "7p",
+     "9m",
+     "1p",
+     "2z",
+     "3p",
+     "4s"
+    ]
+   },
+   "riichi": {
+    "seat": "shimo",
+    "index": 5
+   },
+   "candidates": [
+    {
+     "tile": "6s",
+     "shanten": 1,
+     "ukeire": 20,
+     "ukeireTiles": [
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "7p",
+      "8p",
+      "9p",
+      "1z"
+     ],
+     "dealIn": 0.0018,
+     "agari": 0.2396,
+     "lose": 0.2018,
+     "ev": 631
+    },
+    {
+     "tile": "9p",
+     "shanten": 1,
+     "ukeire": 24,
+     "ukeireTiles": [
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.0865,
+     "agari": 0.2412,
+     "lose": 0.2865,
+     "ev": 143
+    },
+    {
+     "tile": "4p",
+     "shanten": 2,
+     "ukeire": 36,
+     "ukeireTiles": [
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "1p",
+      "4p",
+      "7p",
+      "8p",
+      "9p",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.0008,
+     "agari": 0.03,
+     "lose": 0.0508,
+     "ev": -71
+    },
+    {
+     "tile": "1z",
+     "shanten": 2,
+     "ukeire": 33,
+     "ukeireTiles": [
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "7p",
+      "8p",
+      "9p",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.003,
+     "agari": 0.03,
+     "lose": 0.053,
+     "ev": -84
+    },
+    {
+     "tile": "8m",
+     "shanten": 1,
+     "ukeire": 23,
+     "ukeireTiles": [
+      "7p",
+      "8p",
+      "9p",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.119,
+     "agari": 0.2273,
+     "lose": 0.319,
+     "ev": -155
+    },
+    {
+     "tile": "2p",
+     "shanten": 2,
+     "ukeire": 36,
+     "ukeireTiles": [
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "2p",
+      "5p",
+      "7p",
+      "8p",
+      "9p",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.1208,
+     "agari": 0.03,
+     "lose": 0.1708,
+     "ev": -779
+    },
+    {
+     "tile": "7m",
+     "shanten": 2,
+     "ukeire": 36,
+     "ukeireTiles": [
+      "4m",
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "7p",
+      "8p",
+      "9p",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.1535,
+     "agari": 0.03,
+     "lose": 0.2035,
+     "ev": -972
+    },
+    {
+     "tile": "3p",
+     "shanten": 2,
+     "ukeire": 35,
+     "ukeireTiles": [
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "3p",
+      "7p",
+      "8p",
+      "9p",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.1542,
+     "agari": 0.03,
+     "lose": 0.2042,
+     "ev": -977
+    },
+    {
+     "tile": "6m",
+     "shanten": 2,
+     "ukeire": 33,
+     "ukeireTiles": [
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "7p",
+      "8p",
+      "9p",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.205,
+     "agari": 0.03,
+     "lose": 0.255,
+     "ev": -1276
+    },
+    {
+     "tile": "5s",
+     "shanten": 2,
+     "ukeire": 37,
+     "ukeireTiles": [
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "7p",
+      "8p",
+      "9p",
+      "3s",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.2403,
+     "agari": 0.03,
+     "lose": 0.2903,
+     "ev": -1484
+    }
+   ],
+   "best": "6s",
+   "answerType": "fold"
+  },
+  {
+   "id": "o00008",
+   "hand": [
+    "1m",
+    "3m",
+    "7m",
+    "9m",
+    "2p",
+    "4p",
+    "5p",
+    "5p",
+    "6s",
+    "8s",
+    "8s",
+    "3z",
+    "3z"
+   ],
+   "draw": "7s",
+   "doraIndicator": "8p",
+   "turn": 8,
+   "draws": 10,
+   "rivers": {
+    "self": [
+     "1p",
+     "6z",
+     "7z",
+     "9s",
+     "4m",
+     "2z",
+     "5p"
+    ],
+    "shimo": [
+     "3z",
+     "6z",
+     "1m",
+     "4p",
+     "6z",
+     "4z",
+     "8s"
+    ],
+    "toimen": [
+     "3z",
+     "2m",
+     "2s",
+     "4z",
+     "3p",
+     "4s",
+     "6m"
+    ],
+    "kami": [
+     "6p",
+     "2z",
+     "1z",
+     "2p",
+     "9m",
+     "1s",
+     "8p"
+    ]
+   },
+   "riichi": {
+    "seat": "toimen",
+    "index": 3
+   },
+   "candidates": [
+    {
+     "tile": "3z",
+     "shanten": 2,
+     "ukeire": 10,
+     "ukeireTiles": [
+      "2m",
+      "8m",
+      "3p"
+     ],
+     "dealIn": 0.0015,
+     "agari": 0.03,
+     "lose": 0.0515,
+     "ev": -75
+    },
+    {
+     "tile": "9m",
+     "shanten": 2,
+     "ukeire": 7,
+     "ukeireTiles": [
+      "2m",
+      "3p",
+      "5p"
+     ],
+     "dealIn": 0.0523,
+     "agari": 0.03,
+     "lose": 0.1023,
+     "ev": -374
+    },
+    {
+     "tile": "1m",
+     "shanten": 2,
+     "ukeire": 8,
+     "ukeireTiles": [
+      "8m",
+      "3p",
+      "5p"
+     ],
+     "dealIn": 0.053,
+     "agari": 0.03,
+     "lose": 0.103,
+     "ev": -379
+    },
+    {
+     "tile": "8s",
+     "shanten": 2,
+     "ukeire": 14,
+     "ukeireTiles": [
+      "2m",
+      "8m",
+      "3p",
+      "5p",
+      "6p"
+     ],
+     "dealIn": 0.0703,
+     "agari": 0.03,
+     "lose": 0.1203,
+     "ev": -481
+    },
+    {
+     "tile": "2p",
+     "shanten": 2,
+     "ukeire": 14,
+     "ukeireTiles": [
+      "2m",
+      "8m",
+      "3p",
+      "5p",
+      "6p"
+     ],
+     "dealIn": 0.0713,
+     "agari": 0.03,
+     "lose": 0.1213,
+     "ev": -487
+    },
+    {
+     "tile": "7m",
+     "shanten": 2,
+     "ukeire": 7,
+     "ukeireTiles": [
+      "2m",
+      "3p",
+      "5p"
+     ],
+     "dealIn": 0.09,
+     "agari": 0.03,
+     "lose": 0.14,
+     "ev": -598
+    },
+    {
+     "tile": "7s",
+     "shanten": 3,
+     "ukeire": 35,
+     "ukeireTiles": [
+      "1m",
+      "2m",
+      "3m",
+      "7m",
+      "8m",
+      "9m",
+      "2p",
+      "3p",
+      "4p",
+      "5p",
+      "6p",
+      "6s",
+      "7s",
+      "8s"
+     ],
+     "dealIn": 0.0907,
+     "agari": 0.03,
+     "lose": 0.1407,
+     "ev": -602
+    },
+    {
+     "tile": "3m",
+     "shanten": 2,
+     "ukeire": 8,
+     "ukeireTiles": [
+      "8m",
+      "3p",
+      "5p"
+     ],
+     "dealIn": 0.092,
+     "agari": 0.03,
+     "lose": 0.142,
+     "ev": -609
+    },
+    {
+     "tile": "4p",
+     "shanten": 2,
+     "ukeire": 8,
+     "ukeireTiles": [
+      "2m",
+      "8m",
+      "5p"
+     ],
+     "dealIn": 0.1202,
+     "agari": 0.03,
+     "lose": 0.1703,
+     "ev": -776
+    },
+    {
+     "tile": "6s",
+     "shanten": 3,
+     "ukeire": 38,
+     "ukeireTiles": [
+      "1m",
+      "2m",
+      "3m",
+      "7m",
+      "8m",
+      "9m",
+      "2p",
+      "3p",
+      "4p",
+      "5p",
+      "6p",
+      "6s",
+      "7s",
+      "8s",
+      "9s"
+     ],
+     "dealIn": 0.1212,
+     "agari": 0.03,
+     "lose": 0.1713,
+     "ev": -782
+    },
+    {
+     "tile": "5p",
+     "shanten": 2,
+     "ukeire": 13,
+     "ukeireTiles": [
+      "2m",
+      "8m",
+      "3p",
+      "6p"
+     ],
+     "dealIn": 0.143,
+     "agari": 0.03,
+     "lose": 0.193,
+     "ev": -909
+    }
+   ],
+   "best": "3z",
+   "answerType": "fold"
+  },
+  {
+   "id": "o00009",
+   "hand": [
+    "2m",
+    "2m",
+    "5p",
+    "5p",
+    "8s",
+    "8s",
+    "1z",
+    "1z",
+    "3z",
+    "3z",
+    "5z",
+    "5z",
+    "7z"
+   ],
+   "draw": "6z",
+   "doraIndicator": "1m",
+   "turn": 11,
+   "draws": 7,
+   "rivers": {
+    "self": [
+     "5z",
+     "4p",
+     "1p",
+     "9s",
+     "6p",
+     "1p",
+     "6p",
+     "1p",
+     "6p",
+     "1z"
+    ],
+    "shimo": [
+     "2z",
+     "7z",
+     "9m",
+     "9m",
+     "9s",
+     "1m",
+     "2z",
+     "4m",
+     "5p",
+     "8m"
+    ],
+    "toimen": [
+     "9p",
+     "9s",
+     "2s",
+     "6z",
+     "7m",
+     "7m",
+     "8p",
+     "6m",
+     "7s",
+     "7m"
+    ],
+    "kami": [
+     "9p",
+     "2z",
+     "4z",
+     "8m",
+     "3p",
+     "5s",
+     "6s",
+     "3s",
+     "2p",
+     "4p"
+    ]
+   },
+   "riichi": {
+    "seat": "kami",
+    "index": 4
+   },
+   "candidates": [
+    {
+     "tile": "7z",
+     "shanten": 0,
+     "ukeire": 2,
+     "ukeireTiles": [
+      "6z"
+     ],
+     "dealIn": 0.0222,
+     "agari": 0.4107,
+     "lose": 0.2422,
+     "ev": 1693
+    },
+    {
+     "tile": "6z",
+     "shanten": 0,
+     "ukeire": 2,
+     "ukeireTiles": [
+      "7z"
+     ],
+     "dealIn": 0.0227,
+     "agari": 0.4104,
+     "lose": 0.2427,
+     "ev": 1688
+    },
+    {
+     "tile": "5z",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "5z",
+      "6z",
+      "7z"
+     ],
+     "dealIn": 0.02,
+     "agari": 0.147,
+     "lose": 0.22,
+     "ev": -181
+    },
+    {
+     "tile": "1z",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "1z",
+      "6z",
+      "7z"
+     ],
+     "dealIn": 0.022,
+     "agari": 0.1467,
+     "lose": 0.222,
+     "ev": -194
+    },
+    {
+     "tile": "3z",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "3z",
+      "6z",
+      "7z"
+     ],
+     "dealIn": 0.051,
+     "agari": 0.148,
+     "lose": 0.251,
+     "ev": -355
+    },
+    {
+     "tile": "2m",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "2m",
+      "6z",
+      "7z"
+     ],
+     "dealIn": 0.072,
+     "agari": 0.1448,
+     "lose": 0.272,
+     "ev": -504
+    },
+    {
+     "tile": "8s",
+     "shanten": 1,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "8s",
+      "6z",
+      "7z"
+     ],
+     "dealIn": 0.073,
+     "agari": 0.1446,
+     "lose": 0.273,
+     "ev": -510
+    },
+    {
+     "tile": "5p",
+     "shanten": 1,
+     "ukeire": 5,
+     "ukeireTiles": [
+      "5p",
+      "6z",
+      "7z"
+     ],
+     "dealIn": 0.1425,
+     "agari": 0.1286,
+     "lose": 0.3425,
+     "ev": -1042
+    }
+   ],
+   "best": "7z",
+   "answerType": "fold"
+  },
+  {
+   "id": "o00010",
+   "hand": [
+    "5m",
+    "6m",
+    "7m",
+    "0p",
+    "6p",
+    "7p",
+    "7p",
+    "2s",
+    "3s",
+    "4s",
+    "5s",
+    "6s",
+    "5z"
+   ],
+   "draw": "1s",
+   "doraIndicator": "7z",
+   "turn": 10,
+   "draws": 8,
+   "rivers": {
+    "self": [
+     "2z",
+     "3z",
+     "7z",
+     "7m",
+     "3s",
+     "7m",
+     "4z",
+     "8p",
+     "4z"
+    ],
+    "shimo": [
+     "9m",
+     "1s",
+     "6z",
+     "1m",
+     "1m",
+     "4m",
+     "7s",
+     "2m",
+     "2p"
+    ],
+    "toimen": [
+     "2m",
+     "4m",
+     "7z",
+     "8s",
+     "1s",
+     "2m",
+     "1z",
+     "4z",
+     "5z"
+    ],
+    "kami": [
+     "9p",
+     "9p",
+     "5s",
+     "5s",
+     "5p",
+     "3s",
+     "4s",
+     "3p",
+     "6p"
+    ]
+   },
+   "riichi": {
+    "seat": "shimo",
+    "index": 6
+   },
+   "candidates": [
+    {
+     "tile": "5z",
+     "shanten": 0,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "4p",
+      "7p"
+     ],
+     "dealIn": 0.0288,
+     "agari": 0.4856,
+     "lose": 0.2487,
+     "ev": 2224
+    },
+    {
+     "tile": "7p",
+     "shanten": 0,
+     "ukeire": 2,
+     "ukeireTiles": [
+      "5z"
+     ],
+     "dealIn": 0.118,
+     "agari": 0.3704,
+     "lose": 0.338,
+     "ev": 822
+    },
+    {
+     "tile": "1s",
+     "shanten": 1,
+     "ukeire": 14,
+     "ukeireTiles": [
+      "4p",
+      "7p",
+      "1s",
+      "4s",
+      "7s",
+      "5z"
+     ],
+     "dealIn": 0.0027,
+     "agari": 0.2034,
+     "lose": 0.2028,
+     "ev": 351
+    },
+    {
+     "tile": "2s",
+     "shanten": 1,
+     "ukeire": 11,
+     "ukeireTiles": [
+      "4p",
+      "7p",
+      "2s",
+      "5z"
+     ],
+     "dealIn": 0.0933,
+     "agari": 0.1687,
+     "lose": 0.2933,
+     "ev": -447
+    },
+    {
+     "tile": "7m",
+     "shanten": 1,
+     "ukeire": 11,
+     "ukeireTiles": [
+      "4m",
+      "7m",
+      "4p",
+      "7p",
+      "5z"
+     ],
+     "dealIn": 0.1192,
+     "agari": 0.1638,
+     "lose": 0.3193,
+     "ev": -638
+    },
+    {
+     "tile": "3s",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "4p",
+      "7p",
+      "3s",
+      "5z"
+     ],
+     "dealIn": 0.1187,
+     "agari": 0.1533,
+     "lose": 0.3187,
+     "ev": -715
+    },
+    {
+     "tile": "6p",
+     "shanten": 1,
+     "ukeire": 15,
+     "ukeireTiles": [
+      "3p",
+      "4p",
+      "5p",
+      "6p",
+      "7p",
+      "5z"
+     ],
+     "dealIn": 0.1575,
+     "agari": 0.1769,
+     "lose": 0.3575,
+     "ev": -764
+    },
+    {
+     "tile": "4s",
+     "shanten": 1,
+     "ukeire": 13,
+     "ukeireTiles": [
+      "4p",
+      "7p",
+      "4s",
+      "7s",
+      "5z"
+     ],
+     "dealIn": 0.1573,
+     "agari": 0.1669,
+     "lose": 0.3573,
+     "ev": -839
+    },
+    {
+     "tile": "6s",
+     "shanten": 1,
+     "ukeire": 12,
+     "ukeireTiles": [
+      "4p",
+      "7p",
+      "3s",
+      "6s",
+      "5z"
+     ],
+     "dealIn": 0.1563,
+     "agari": 0.162,
+     "lose": 0.3563,
+     "ev": -871
+    },
+    {
+     "tile": "6m",
+     "shanten": 1,
+     "ukeire": 11,
+     "ukeireTiles": [
+      "6m",
+      "4p",
+      "7p",
+      "5z"
+     ],
+     "dealIn": 0.1588,
+     "agari": 0.1565,
+     "lose": 0.3588,
+     "ev": -926
+    },
+    {
+     "tile": "5m",
+     "shanten": 1,
+     "ukeire": 15,
+     "ukeireTiles": [
+      "5m",
+      "8m",
+      "4p",
+      "7p",
+      "5z"
+     ],
+     "dealIn": 0.182,
+     "agari": 0.1718,
+     "lose": 0.382,
+     "ev": -948
+    },
+    {
+     "tile": "5p",
+     "shanten": 1,
+     "ukeire": 15,
+     "ukeireTiles": [
+      "4p",
+      "5p",
+      "6p",
+      "7p",
+      "8p",
+      "5z"
+     ],
+     "dealIn": 0.184,
+     "agari": 0.1714,
+     "lose": 0.384,
+     "ev": -962
+    },
+    {
+     "tile": "5s",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "4p",
+      "7p",
+      "5s",
+      "5z"
+     ],
+     "dealIn": 0.1828,
+     "agari": 0.1422,
+     "lose": 0.3828,
+     "ev": -1177
+    }
+   ],
+   "best": "5z",
+   "answerType": "push"
+  },
+  {
+   "id": "o00011",
+   "hand": [
+    "2m",
+    "3m",
+    "4m",
+    "5m",
+    "6m",
+    "7m",
+    "1p",
+    "2p",
+    "3p",
+    "5s",
+    "6s",
+    "9s",
+    "9s"
+   ],
+   "draw": "8s",
+   "doraIndicator": "4p",
+   "turn": 8,
+   "draws": 10,
+   "rivers": {
+    "self": [
+     "1z",
+     "1s",
+     "7m",
+     "7s",
+     "3m",
+     "5z",
+     "8m"
+    ],
+    "shimo": [
+     "3z",
+     "2m",
+     "1p",
+     "9s",
+     "7p",
+     "3m",
+     "1s"
+    ],
+    "toimen": [
+     "9s",
+     "7p",
+     "4z",
+     "4s",
+     "3s",
+     "4z",
+     "1z"
+    ],
+    "kami": [
+     "4z",
+     "9p",
+     "1m",
+     "1z",
+     "1p",
+     "6s",
+     "8s"
+    ]
+   },
+   "riichi": {
+    "seat": "toimen",
+    "index": 3
+   },
+   "candidates": [
+    {
+     "tile": "8s",
+     "shanten": 0,
+     "ukeire": 6,
+     "ukeireTiles": [
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.072,
+     "agari": 0.464,
+     "lose": 0.292,
+     "ev": 1804
+    },
+    {
+     "tile": "5s",
+     "shanten": 0,
+     "ukeire": 3,
+     "ukeireTiles": [
+      "7s"
+     ],
+     "dealIn": 0.1403,
+     "agari": 0.3783,
+     "lose": 0.3603,
+     "ev": 750
+    },
+    {
+     "tile": "9s",
+     "shanten": 1,
+     "ukeire": 13,
+     "ukeireTiles": [
+      "4s",
+      "5s",
+      "6s",
+      "7s",
+      "8s"
+     ],
+     "dealIn": 0.0015,
+     "agari": 0.1977,
+     "lose": 0.2015,
+     "ev": 314
+    },
+    {
+     "tile": "2m",
+     "shanten": 1,
+     "ukeire": 14,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "8m",
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.071,
+     "agari": 0.1895,
+     "lose": 0.271,
+     "ev": -158
+    },
+    {
+     "tile": "1p",
+     "shanten": 1,
+     "ukeire": 10,
+     "ukeireTiles": [
+      "1p",
+      "4p",
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.0503,
+     "agari": 0.171,
+     "lose": 0.2503,
+     "ev": -177
+    },
+    {
+     "tile": "7m",
+     "shanten": 1,
+     "ukeire": 14,
+     "ukeireTiles": [
+      "1m",
+      "4m",
+      "7m",
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.0917,
+     "agari": 0.1853,
+     "lose": 0.2918,
+     "ev": -312
+    },
+    {
+     "tile": "2p",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "2p",
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.073,
+     "agari": 0.1613,
+     "lose": 0.273,
+     "ev": -384
+    },
+    {
+     "tile": "6s",
+     "shanten": 1,
+     "ukeire": 16,
+     "ukeireTiles": [
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "7s",
+      "8s"
+     ],
+     "dealIn": 0.123,
+     "agari": 0.1894,
+     "lose": 0.323,
+     "ev": -465
+    },
+    {
+     "tile": "3p",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "3p",
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.0925,
+     "agari": 0.1579,
+     "lose": 0.2925,
+     "ev": -525
+    },
+    {
+     "tile": "3m",
+     "shanten": 1,
+     "ukeire": 7,
+     "ukeireTiles": [
+      "3m",
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.0905,
+     "agari": 0.1473,
+     "lose": 0.2905,
+     "ev": -594
+    },
+    {
+     "tile": "4m",
+     "shanten": 1,
+     "ukeire": 12,
+     "ukeireTiles": [
+      "1m",
+      "4m",
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.12,
+     "agari": 0.169,
+     "lose": 0.32,
+     "ev": -604
+    },
+    {
+     "tile": "6m",
+     "shanten": 1,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "6m",
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.1222,
+     "agari": 0.1527,
+     "lose": 0.3223,
+     "ev": -740
+    },
+    {
+     "tile": "5m",
+     "shanten": 1,
+     "ukeire": 12,
+     "ukeireTiles": [
+      "5m",
+      "8m",
+      "4s",
+      "7s"
+     ],
+     "dealIn": 0.1428,
+     "agari": 0.1646,
+     "lose": 0.3427,
+     "ev": -770
+    }
+   ],
+   "best": "8s",
+   "answerType": "push"
+  },
+  {
+   "id": "o00012",
+   "hand": [
+    "3m",
+    "4m",
+    "5p",
+    "6p",
+    "7p",
+    "2s",
+    "2s",
+    "3s",
+    "6s",
+    "8s",
+    "8s",
+    "4z",
+    "4z"
+   ],
+   "draw": "6s",
+   "doraIndicator": "9m",
+   "turn": 9,
+   "draws": 9,
+   "rivers": {
+    "self": [
+     "9s",
+     "1p",
+     "9m",
+     "2m",
+     "5p",
+     "3s",
+     "4z",
+     "9m"
+    ],
+    "shimo": [
+     "9p",
+     "3z",
+     "1s",
+     "5z",
+     "6p",
+     "7m",
+     "2m",
+     "6m"
+    ],
+    "toimen": [
+     "7z",
+     "9p",
+     "9p",
+     "4m",
+     "1m",
+     "3p",
+     "5s",
+     "8m"
+    ],
+    "kami": [
+     "4z",
+     "9s",
+     "7p",
+     "3s",
+     "5s",
+     "5m",
+     "3z",
+     "3m"
+    ]
+   },
+   "riichi": {
+    "seat": "kami",
+    "index": 3
+   },
+   "candidates": [
+    {
+     "tile": "3m",
+     "shanten": 2,
+     "ukeire": 26,
+     "ukeireTiles": [
+      "4m",
+      "5p",
+      "6p",
+      "7p",
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "6s",
+      "7s",
+      "8s"
+     ],
+     "dealIn": 0,
+     "agari": 0.03,
+     "lose": 0.05,
+     "ev": -67
+    },
+    {
+     "tile": "7p",
+     "shanten": 2,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "3m",
+      "4m",
+      "5p",
+      "6p",
+      "3s"
+     ],
+     "dealIn": 0,
+     "agari": 0.03,
+     "lose": 0.05,
+     "ev": -67
+    },
+    {
+     "tile": "3s",
+     "shanten": 2,
+     "ukeire": 25,
+     "ukeireTiles": [
+      "2m",
+      "3m",
+      "4m",
+      "5m",
+      "5p",
+      "6p",
+      "7p",
+      "2s",
+      "6s",
+      "7s",
+      "8s"
+     ],
+     "dealIn": 0.0008,
+     "agari": 0.03,
+     "lose": 0.0508,
+     "ev": -71
+    },
+    {
+     "tile": "4z",
+     "shanten": 2,
+     "ukeire": 22,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "1s",
+      "2s",
+      "4s",
+      "6s",
+      "7s",
+      "8s"
+     ],
+     "dealIn": 0.0022,
+     "agari": 0.03,
+     "lose": 0.0523,
+     "ev": -79
+    },
+    {
+     "tile": "2s",
+     "shanten": 2,
+     "ukeire": 20,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "1s",
+      "4s",
+      "6s",
+      "7s",
+      "8s"
+     ],
+     "dealIn": 0.1273,
+     "agari": 0.03,
+     "lose": 0.1773,
+     "ev": -817
+    },
+    {
+     "tile": "8s",
+     "shanten": 2,
+     "ukeire": 20,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "1s",
+      "2s",
+      "4s",
+      "6s",
+      "7s"
+     ],
+     "dealIn": 0.1275,
+     "agari": 0.03,
+     "lose": 0.1775,
+     "ev": -819
+    },
+    {
+     "tile": "6p",
+     "shanten": 2,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "3m",
+      "4m",
+      "5p",
+      "7p",
+      "3s"
+     ],
+     "dealIn": 0.2165,
+     "agari": 0.03,
+     "lose": 0.2665,
+     "ev": -1344
+    },
+    {
+     "tile": "6s",
+     "shanten": 2,
+     "ukeire": 20,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "1s",
+      "2s",
+      "4s",
+      "7s",
+      "8s"
+     ],
+     "dealIn": 0.2185,
+     "agari": 0.03,
+     "lose": 0.2685,
+     "ev": -1355
+    },
+    {
+     "tile": "4m",
+     "shanten": 2,
+     "ukeire": 26,
+     "ukeireTiles": [
+      "3m",
+      "5p",
+      "6p",
+      "7p",
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "6s",
+      "7s",
+      "8s"
+     ],
+     "dealIn": 0.2188,
+     "agari": 0.03,
+     "lose": 0.2687,
+     "ev": -1357
+    },
+    {
+     "tile": "5p",
+     "shanten": 2,
+     "ukeire": 9,
+     "ukeireTiles": [
+      "3m",
+      "4m",
+      "6p",
+      "7p",
+      "3s"
+     ],
+     "dealIn": 0.253,
+     "agari": 0.03,
+     "lose": 0.303,
+     "ev": -1559
+    }
+   ],
+   "best": "3m",
+   "answerType": "fold"
+  }
+ ]
+}

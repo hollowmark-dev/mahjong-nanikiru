@@ -143,7 +143,7 @@ textarea { width: 100%; font: inherit; font-size: .9rem; color: var(--ink); back
 .table {
   --s: min(calc(100vw - 16px), 360px);
   --w: calc(var(--s) * 0.05);            /* 河の牌1枚の幅 */
-  --rw: calc(var(--w) * 6);              /* 河の幅（6枚） */
+  --rw: calc(var(--w) * 6.5);            /* 河の幅（6枚＋横向きの宣言牌の分） */
   --rh: calc(var(--w) * 1.4 * 2);        /* 河の高さ（2行） */
   --lh: calc(var(--s) * 0.036);          /* 家名の行 */
   position: relative; width: var(--s); height: var(--s); margin: 4px auto 6px;
@@ -156,7 +156,7 @@ textarea { width: 100%; font: inherit; font-size: .9rem; color: var(--ink); back
 .seat-shimo { top: calc(50% - (var(--rh) + var(--lh)) / 2); right: calc(var(--s) * 0.012 + (var(--rh) + var(--lh)) / 2 - var(--rw) / 2); transform: rotate(-90deg); }
 .seat-kami { top: calc(50% - (var(--rh) + var(--lh)) / 2); left: calc(var(--s) * 0.012 + (var(--rh) + var(--lh)) / 2 - var(--rw) / 2); transform: rotate(90deg); }
 .river { display: flex; flex-wrap: wrap; align-content: flex-start; height: var(--rh); width: 100%; }
-.river .rt { width: calc(100% / 6); padding: 0.5px; }
+.river .rt { width: var(--w); padding: 0.5px; }
 .river .tile { border-radius: 2px; }
 .seat-name { height: var(--lh); line-height: var(--lh); text-align: center; font-size: calc(var(--s) * 0.028); color: #cfe8da; }
 .table-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; color: #eaf6ef; background: rgba(0,0,0,.18); border-radius: 10px; padding: 6px 12px; }
@@ -166,3 +166,16 @@ textarea { width: 100%; font: inherit; font-size: .9rem; color: var(--ink); back
 .table .tw.hl .tile { outline: 2px solid #ffd54a; outline-offset: -1px; box-shadow: 0 0 6px 2px #ffd54a; }
 .table .tw.hl { position: relative; z-index: 2; }
 .tag.furiten-tag { background: var(--warn); color: #fff; display: inline-block; margin-top: 2px; }
+
+/* リーチ宣言牌（横向き）: 幅1.4枚×高さ1.4枚の枠に、90°回した牌を下揃えで置く */
+.river .rt-riichi { position: relative; width: calc(var(--w) * 1.4); height: calc(var(--w) * 1.4); display: block; }
+.river .rt-riichi .rt { position: absolute; width: var(--w); left: calc(var(--w) * 0.2); top: calc(var(--w) * 0.2); transform: rotate(90deg); }
+.riichi-tag { background: #d0262e; color: #fff; border-radius: 4px; padding: 0 4px; margin-left: 4px; font-weight: 700; }
+.kyotaku { margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px; font-size: calc(var(--s) * 0.026); }
+.kyotaku .stick { width: calc(var(--s) * 0.15); display: block; line-height: 0; }
+.kind-tag { background: #d0262e; color: #fff; border-radius: 999px; padding: 0 10px; font-size: .8rem; font-weight: 700; }
+.type-line { margin: 4px 0; font-size: .9rem; }
+.ctable.oshi .row { grid-template-columns: 40px 2.2em repeat(4, minmax(0, 1fr)); font-size: .8rem; }
+.ctable.oshi .c-n { text-align: center; }
+.ctable.oshi .c-ev { font-weight: 700; }
+.oshi-verdict { margin: 12px 0 0; }
