@@ -44,7 +44,7 @@ export function createTable(problem) {
     h("div", { class: "table-turn" }, `${problem.turn}巡目`),
     h("div", { class: "table-dora-label" }, "ドラ表示牌"),
     dora,
-    problem.riichi ? h("div", { class: "kyotaku", "aria-label": "供託 1000点棒" }, stickSvg(), h("span", {}, "供託")) : null));
+    problem.riichi ? h("div", { class: "kyotaku", role: "img", "aria-label": "供託 1000点棒" }, stickSvg(), h("span", {}, "供託")) : null));
 
   let cur = [];
   function highlight(kind) {

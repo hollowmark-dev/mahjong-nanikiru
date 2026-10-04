@@ -1,6 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { scoreAnswer, rankOf, timeFactor } from "../docs/js/game/scoring.js";
+import { parseTile } from "../docs/js/engine/tiles.js";
+import { genbutsuKinds, dealInView } from "../docs/js/game/safety.js";
 import { pickDailyMixed, OSHI_POSITIONS } from "../docs/js/game/daily.js";
 import { oshiRankOf } from "../docs/js/game/scoring.js";
 import { summarizeByType } from "../docs/js/game/session.js";
@@ -36,7 +38,7 @@ test("採点: 最善・残り時間満タンは150点", () => {
   assert.equal(r.isBest, true);
 });
 
-test("採点: q は agari の比、基礎点は q の二乗", () => {
+test("採点: q は agari の比、基礎点は 100×(1−3×(1−q))", () => {
   const r = scoreAnswer({ problem: mkProblem(), tile: "4p", remainingMs: 0, limitMs: L });
   assert.ok(Math.abs(r.q - 0.75) < 1e-12);
   assert.equal(r.points, 25); // 100 × (1 − 3×0.25)
@@ -176,6 +178,12 @@ test("セッション集計と共有テキスト", () => {
     buildShareText({ date: "2026-10-03", score: 1234, bestCount: 7, url: "https://example.com/x/" }),
     "何切る道場 10/3 1234点 最善7/10 #何切る道場 https://example.com/x/",
   );
+  assert.equal(
+    buildShareText({ date: "2026-10-03", score: 1234, bestCount: 7, url: "https://example.com/x/", mode: "practice" }),
+    "何切る道場（練習） 10/3 1234点 最善7/10 #何切る道場 https://example.com/x/",
+  );
+  assert.ok(buildShareText({ date: "2026-10-03", score: 1, bestCount: 0, url: "u", mode: "retry" }).includes("（練習）"));
+  assert.ok(!buildShareText({ date: "2026-10-03", score: 1, bestCount: 0, url: "u", mode: "daily" }).includes("（練習）"));
 });
 
 test("赤5をツモって時間切れ: 通常5が手牌にあっても赤の減点なし", () => {
@@ -424,4 +432,26 @@ test("種類別の最善数", () => {
   const a = (type, isBest) => ({ type, isBest });
   const r = summarizeByType([a("speed", true), a("speed", false), a("oshihiki", true), a(undefined, true)]);
   assert.deepEqual(r, { speed: { best: 2, count: 3 }, oshihiki: { best: 1, count: 1 } });
+});
+
+test("現物判定: リーチ者の河＋宣言後の他家の打牌だけ。0%でも壁は現物ではない", () => {
+  // リーチ者=対面(index 2)、宣言は第3巡。自家は対面より先、下家も先、上家は後に打つ
+  const p = {
+    riichi: { seat: "toimen", index: 2 },
+    rivers: {
+      self: ["1m", "2m", "3m", "4m"],        // 4m は第4巡 → 宣言後
+      shimo: ["1p", "2p", "3p", "4p"],       // 3p は第3巡で対面より前 → 宣言前。4p は宣言後
+      toimen: ["1s", "2s", "3s", "9s"],      // 自身の河はすべて現物
+      kami: ["1z", "2z", "3z", "4z"],        // 3z は第3巡で対面より後 → 宣言後
+    },
+  };
+  const g = genbutsuKinds(p);
+  const has = (t) => g.has(parseTile(t).kind);
+  ["1s", "2s", "3s", "9s", "4m", "4p", "3z", "4z"].forEach((t) => assert.ok(has(t), t));
+  ["1m", "2m", "3m", "1p", "2p", "3p", "1z", "2z"].forEach((t) => assert.ok(!has(t), t));
+  const cand = (tile, dealIn) => ({ tile, dealIn });
+  assert.equal(dealInView(cand("9s", 0), p, g), "genbutsu");
+  assert.equal(dealInView(cand("5m", 0), p, g), "zero");
+  assert.equal(dealInView(cand("4m", 0.01), p, g), "risk");
+  assert.equal(genbutsuKinds({}).size, 0);
 });

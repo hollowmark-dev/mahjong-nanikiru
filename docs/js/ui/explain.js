@@ -36,11 +36,11 @@ export function renderExplain(root, args) {
   );
 
   const head = h("div", { class: "row head", role: "row" },
-    h("div", { class: "c-tile" }, "切る牌"),
-    h("div", { class: "c-sh" }, "向聴"),
-    h("div", { class: "c-uk" }, "受け入れ"),
-    h("div", { class: "c-tp" }, "テンパイ"),
-    h("div", { class: "c-ag" }, "和了"),
+    h("div", { class: "c-tile", role: "columnheader" }, "切る牌"),
+    h("div", { class: "c-sh", role: "columnheader" }, "向聴"),
+    h("div", { class: "c-uk", role: "columnheader" }, "受け入れ"),
+    h("div", { class: "c-tp", role: "columnheader" }, "テンパイ"),
+    h("div", { class: "c-ag", role: "columnheader" }, "和了"),
   );
   const rows = problem.candidates.map((c) => {
     const cls = ["row"];
@@ -49,13 +49,13 @@ export function renderExplain(root, args) {
     const tiles = h("div", { class: "uk-tiles" });
     c.ukeireTiles.forEach((t) => tiles.append(tileNode(t, "mini", true)));
     return h("div", { class: cls.join(" "), role: "row" },
-      h("div", { class: "c-tile" }, tileNode(c.tile, "", true),
+      h("div", { class: "c-tile", role: "cell" }, tileNode(c.tile, "", true),
         c.tile === mineKind ? h("span", { class: "tag mine-tag" }, "あなた") : null,
         c.tile === bestKind ? h("span", { class: "tag best-tag" }, "最善") : null),
-      h("div", { class: "c-sh" }, String(c.shanten)),
-      h("div", { class: "c-uk" }, h("b", {}, `${c.ukeire}枚`), tiles),
-      h("div", { class: "c-tp" }, pct(c.tenpai), c.furiten ? h("span", { class: "tag furiten-tag" }, "フリテン") : null),
-      h("div", { class: "c-ag" }, pct(c.agari)),
+      h("div", { class: "c-sh", role: "cell" }, String(c.shanten)),
+      h("div", { class: "c-uk", role: "cell" }, h("b", {}, `${c.ukeire}枚`), tiles),
+      h("div", { class: "c-tp", role: "cell" }, pct(c.tenpai), c.furiten ? h("span", { class: "tag furiten-tag" }, "フリテン") : null),
+      h("div", { class: "c-ag", role: "cell" }, pct(c.agari)),
     );
   });
 

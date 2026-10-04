@@ -58,8 +58,10 @@ export function toSubmitAnswers(record) {
 }
 
 // 共有テキスト（SPEC §8-4）
-export function buildShareText({ date, score, bestCount, count = 10, url }) {
-  return `何切る道場 ${shortDate(date)} ${score}点 最善${bestCount}/${count} #何切る道場 ${url}`;
+// mode が daily 以外（練習・再挑戦）なら「（練習）」を入れる。mode 省略は今日の10問
+export function buildShareText({ date, score, bestCount, count = 10, url, mode = "daily" }) {
+  const label = mode === "daily" ? "" : "（練習）";
+  return `何切る道場${label} ${shortDate(date)} ${score}点 最善${bestCount}/${count} #何切る道場 ${url}`;
 }
 
 // 種類別の最善数: { speed: {best, count}, oshihiki: {best, count} }

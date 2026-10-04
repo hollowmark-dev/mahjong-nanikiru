@@ -87,7 +87,7 @@ export function renderResult(root, { record, ctx }) {
 
   async function share() {
     const url = location.origin + location.pathname;
-    const text = buildShareText({ date: record.date, score: record.score, bestCount: record.bestCount, count: record.count, url });
+    const text = buildShareText({ date: record.date, score: record.score, bestCount: record.bestCount, count: record.count, url, mode: record.mode });
     shareBox.replaceChildren();
     try {
       await navigator.clipboard.writeText(text);

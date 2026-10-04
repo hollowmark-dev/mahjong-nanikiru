@@ -2,6 +2,7 @@
 import { h, tileNode, pct, secText } from "./dom.js";
 import { createTable } from "./table.js";
 import { tileLabel, parseTile, kindToStr } from "../engine/tiles.js";
+import { genbutsuKinds, dealInView } from "../game/safety.js";
 
 const RANK_CLASS = { 最善: "r-best", 好手: "r-good", 次善: "r-ok", 悪手: "r-bad", 時間切れ: "r-bad" };
 const ANSWER_TEXT = {
@@ -33,33 +34,34 @@ export function renderExplainOshi(root, { problem, index, total, answer, result,
     h("dt", {}, "期待収支"), h("dd", {}, `あなた ${yen(mineC.ev)} ／ 最善 ${yen(bestC.ev)}（点）`),
     h("dt", {}, "損失"), h("dd", {}, lossText),
     h("dt", {}, "基礎点"), h("dd", {}, result.timedOut ? "0（時間切れは0点）"
-      : result.capped ? "100 × (1 − 損失/3000) < 0 → 0（3000点以上の損失は0点）"
+      : result.capped ? "100 × (1 − 損失/3000) ≤ 0 → 0（3000点以上の損失は0点）"
         : `100 × (1 − ${Math.round(result.loss)}/3000) = ${result.base.toFixed(1)}`),
     h("dt", {}, "時間係数"), h("dd", {}, result.timedOut ? "－（時間切れ）" : `×${result.factor.toFixed(2)}（残り ${secText(result.remainingMs)}）`),
     h("dt", {}, "得点"), h("dd", { class: "pts" }, `${result.points}点`),
   );
 
   const head = h("div", { class: "row head", role: "row" },
-    h("div", { class: "c-tile" }, "切る牌"),
-    h("div", { class: "c-sh" }, "向聴"),
-    h("div", { class: "c-n" }, "放銃率(即)"),
-    h("div", { class: "c-n" }, "和了率"),
-    h("div", { class: "c-n" }, "放銃率(局)"),
-    h("div", { class: "c-n" }, "期待収支"),
+    h("div", { class: "c-tile", role: "columnheader" }, "切る牌"),
+    h("div", { class: "c-sh", role: "columnheader" }, "向聴"),
+    h("div", { class: "c-n", role: "columnheader" }, "放銃率(即)"),
+    h("div", { class: "c-n", role: "columnheader" }, "和了率"),
+    h("div", { class: "c-n", role: "columnheader" }, "放銃率(局)"),
+    h("div", { class: "c-n", role: "columnheader" }, "期待収支"),
   );
+  const genb = genbutsuKinds(problem);
   const rows = problem.candidates.map((c) => {
     const cls = ["row"];
     if (c.tile === mineKind) cls.push("mine");
     if (c.tile === bestKind) cls.push("best");
     return h("div", { class: cls.join(" "), role: "row" },
-      h("div", { class: "c-tile" }, tileNode(c.tile, "", true),
+      h("div", { class: "c-tile", role: "cell" }, tileNode(c.tile, "", true),
         c.tile === mineKind ? h("span", { class: "tag mine-tag" }, "あなた") : null,
         c.tile === bestKind ? h("span", { class: "tag best-tag" }, "最善") : null),
-      h("div", { class: "c-sh" }, String(c.shanten)),
-      h("div", { class: "c-n" }, c.dealIn === 0 ? h("b", {}, "現物") : pct(c.dealIn)),
-      h("div", { class: "c-n" }, pct(c.agari)),
-      h("div", { class: "c-n" }, pct(c.lose)),
-      h("div", { class: "c-n c-ev" }, yen(c.ev)),
+      h("div", { class: "c-sh", role: "cell" }, String(c.shanten)),
+      h("div", { class: "c-n", role: "cell" }, dealInView(c, problem, genb) === "genbutsu" ? h("b", {}, "現物") : pct(c.dealIn)),
+      h("div", { class: "c-n", role: "cell" }, pct(c.agari)),
+      h("div", { class: "c-n", role: "cell" }, pct(c.lose)),
+      h("div", { class: "c-n c-ev", role: "cell" }, yen(c.ev)),
     );
   });
 

@@ -91,13 +91,11 @@ test("rivers: 各家 turn-1 枚、妥当な牌、手牌＋ドラ表示＋河で�
 });
 
 // 押し引き問題（本物があれば本物、なければ sample）
-import { existsSync } from "node:fs";
 test("押し引き問題の形式（SPEC §11.2）", () => {
-  // sample を直接読む（アプリは sample にフォールバックしない）。本物があれば本物も検査する
-  const files = [new URL("../docs/data/problems-oshihiki.sample.json", import.meta.url)];
-  const real = new URL("../docs/data/problems-oshihiki.json", import.meta.url);
-  if (existsSync(real)) files.push(real);
-  for (const file of files) checkOshi(file);
+  // 本番の problems-oshihiki.json は必須（無ければ readFileSync が例外を投げて fail する）。
+  // fixture（ダミー）は形式の回帰用に併せて検査する
+  checkOshi(new URL("../docs/data/problems-oshihiki.json", import.meta.url));
+  checkOshi(new URL("./fixtures/problems-oshihiki.sample.json", import.meta.url));
 });
 
 function checkOshi(file) {

@@ -141,8 +141,14 @@ async function loadJson(url) {
 }
 
 async function boot() {
+  // 2ファイルを並列に取得する
+  const [speedRes, oshiRes] = await Promise.allSettled([
+    loadJson("data/problems.json"),
+    loadJson("data/problems-oshihiki.json"),
+  ]);
   try {
-    const data = await loadJson("data/problems.json");
+    if (speedRes.status !== "fulfilled") throw speedRes.reason;
+    const data = speedRes.value;
     if (!data || data.version !== 2) throw new Error("問題データの版が違います");
     if (!Array.isArray(data.problems) || data.problems.length === 0) throw new Error("問題がありません");
     problems = data.problems;
@@ -153,7 +159,8 @@ async function boot() {
   // 押し引き問題: 読めなければエラー（sample へのフォールバックはしない。
   // 公開時にダミーで黙って動くのを防ぎ、日によって構成が変わるとランキングが不公平になるため）
   try {
-    const data = await loadJson("data/problems-oshihiki.json");
+    if (oshiRes.status !== "fulfilled") throw oshiRes.reason;
+    const data = oshiRes.value;
     if (!data || data.version !== 1 || data.kind !== "oshihiki") throw new Error("押し引きデータの版が違います");
     if (!Array.isArray(data.problems) || data.problems.length === 0) throw new Error("押し引き問題がありません");
     // 問題ごとの kind はファイル全体の kind から付ける（採点・表示の分岐に使う）
