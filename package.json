@@ -1,0 +1,10 @@
+{
+  "name": "mahjong-nanikiru",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "generate": "node scripts/generate.mjs",
+    "serve": "node scripts/serve.mjs"
+  }
+}
