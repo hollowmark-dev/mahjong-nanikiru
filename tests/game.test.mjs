@@ -357,15 +357,16 @@ function mkOshi(evs, over = {}) {
   };
 }
 
-test("押し引き採点: 損失ベース（0→100、750→50、1500以上→0）", () => {
+test("押し引き採点: 損失ベース（0→100、1500→50、3000以上→0）", () => {
   const p = mkOshi({ "9p": 1000, "5z": 250, "1z": -500, "7s": -2000 });
   const sc = (tile) => scoreAnswer({ problem: p, tile, remainingMs: 0, limitMs: L });
   assert.equal(sc("9p").points, 100);
   assert.equal(sc("9p").isBest, true);
   assert.equal(sc("5z").loss, 750);
-  assert.equal(sc("5z").points, 50);
+  assert.equal(sc("5z").points, 75);
   assert.equal(sc("1z").loss, 1500);
-  assert.equal(sc("1z").points, 0);
+  assert.equal(sc("1z").points, 50);
+  assert.equal(scoreAnswer({ problem: mkOshi({ "9p": 3000, "5z": 0 }), tile: "5z", remainingMs: 0, limitMs: L }).points, 0);
   assert.equal(sc("7s").points, 0);
   assert.equal(sc("7s").capped, true);
   assert.equal(sc("7s").rank, "悪手");
@@ -375,10 +376,10 @@ test("押し引き採点: 損失ベース（0→100、750→50、1500以上→0�
 
 test("押し引き採点: ランク境界と同率最善", () => {
   assert.equal(oshiRankOf(0), "最善");
-  assert.equal(oshiRankOf(150), "好手");
-  assert.equal(oshiRankOf(151), "次善");
-  assert.equal(oshiRankOf(450), "次善");
-  assert.equal(oshiRankOf(451), "悪手");
+  assert.equal(oshiRankOf(300), "好手");
+  assert.equal(oshiRankOf(301), "次善");
+  assert.equal(oshiRankOf(900), "次善");
+  assert.equal(oshiRankOf(901), "悪手");
   const p = mkOshi({ "9p": 500, "5z": 500, "1z": 0 });
   assert.equal(scoreAnswer({ problem: p, tile: "5z", remainingMs: 0, limitMs: L }).isBest, true);
 });
@@ -388,9 +389,9 @@ test("押し引き採点: 赤5は損失+300、時間切れは0点", () => {
   const red = scoreAnswer({ problem: p, tile: "0p", remainingMs: 0, limitMs: L });
   assert.equal(red.redPenalty, true);
   assert.equal(red.loss, 300);
-  assert.equal(red.points, 80);
+  assert.equal(red.points, 90);
   assert.equal(red.isBest, false);
-  assert.equal(red.rank, "次善");
+  assert.equal(red.rank, "好手"); // 損失300
   const to = scoreAnswer({ problem: p, tile: "0p", remainingMs: L, limitMs: L, timedOut: true });
   assert.equal(to.points, 0);
   assert.equal(to.rank, "時間切れ");

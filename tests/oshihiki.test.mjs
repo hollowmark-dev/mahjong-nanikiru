@@ -79,7 +79,7 @@ test("dealIn: 現物・宣言後に通った牌は 0、スジ・壁で下がる"
   assert.ok(T.dealIn.every((x) => x >= 0 && x <= 1));
 });
 
-test("dealIn: スジ（河の4m → 1m・7m）と壁（8s 4枚見え → 9s）は危険度が下がる", () => {
+test("dealIn: スジ（河の4m → 7m）と壁（8s 4枚見え → 9s）は危険度が下がる", () => {
   const st = {
     hand: h("2345p678p23s99m11z"), draw: "5z", doraIndicator: "8s", turn: 9, draws: 9,
     rivers: {
@@ -154,7 +154,10 @@ function naive(state, trials, seed, model = OSHIHIKI_MODEL) {
         }
         for (let q = 1; q <= 3; q++) {
           const t = (s + q) % 4;
-          if (t === r && W.has(x)) { res = END.OTHER; p = riichi ? -1000 : 0; return true; }
+          if (t === r && W.has(x)) {
+            if (T.otherOk[i * T.len + j]) { res = END.OTHER; p = riichi ? -1000 : 0; return true; }
+            return false; // 抱えた: 通過牌にならず、自家のロンも無い
+          }
           if (t === 0 && T.ronOk[i * T.len + j] && canRon(x)) { res = END.WIN; p = pts(0, hand, x, false, aka() + (code & 1), ura) + 1000; return true; }
         }
         safe[x] = 1;
@@ -178,17 +181,25 @@ function naive(state, trials, seed, model = OSHIHIKI_MODEL) {
             if (code & 1) red[t] = 1;
             let d = -1, declare = false;
             if (!folded && s13 === 1) {
-              const opts = discardOptions(hand, vis).filter((o) => o.shanten < 1);
-              if (opts.length > 0) {
+              // 受け入れ（ツモ前の13枚）で閾値を選ぶ
+              const h13 = hand.slice(); h13[t]--;
+              let uk = 0;
+              for (let k = 0; k < 34; k++) { if (h13[k] >= 4) continue; h13[k]++; if (shanten(h13) < 1) uk += 4 - vis[k]; h13[k]--; }
+              const th = uk >= model.goodUkeire ? model.pushThresholdGood : model.pushThresholdBad;
+              const opts = discardOptions(hand, vis).filter((o) => o.shanten <= 1);
+              const safest = Math.min(...opts.map((o) => danger(o.kind)));
+              if (safest > th) folded = true;
+              else {
+                const ok = opts.filter((o) => danger(o.kind) <= th);
+                const minS = Math.min(...ok.map((o) => o.shanten));
                 let best = null, bf = true;
-                for (const o of opts) {
-                  const f = (() => { const c = hand.slice(); c[o.kind]--; return waitSet(c).some((k) => river[k] || k === o.kind); })();
+                for (const o of ok.filter((o) => o.shanten === minS)) {
+                  const f = minS === 0 ? (() => { const c = hand.slice(); c[o.kind]--; return waitSet(c).some((k) => river[k] || k === o.kind); })() : true;
                   if (best === null || (bf && !f) || (bf === f && o.ukeireCount > best.ukeireCount)) { best = o; bf = f; }
                 }
                 d = best.kind;
-              } else d = t;
-              if (danger(d) <= model.pushThreshold) { const c = hand.slice(); c[d]--; declare = shanten(c) === 0; }
-              else { d = -1; folded = true; }
+                declare = best.shanten === 0;
+              }
             } else folded = true;
             if (d < 0) {
               let bv = 2;
@@ -249,9 +260,11 @@ test("simulate: 素朴な参照実装と試行ごとに収支・結果が一致"
   const states = [base];
   for (let i = 0; i < 4; i++) states.push(randomOshiState(rng));
   const seen = new Set();
-  for (const st of states) {
-    const fast = evaluateOshihikiRaw(st, { trials: 40, seed: 7 });
-    const ref = naive(st, 40, 7);
+  const models = [OSHIHIKI_MODEL, { ...OSHIHIKI_MODEL, pushThresholdGood: 0.15, pushThresholdBad: 0.05 }];
+  for (const [si, st] of states.entries()) {
+    const model = models[si % 2];
+    const fast = evaluateOshihikiRaw(st, { trials: 40, seed: 7, model });
+    const ref = naive(st, 40, 7, model);
     for (const c of fast.candidates) {
       const rr = ref[c.kind];
       for (let i = 0; i < 40; i++) {
@@ -319,5 +332,25 @@ test("evaluateOshihiki: 同じ seed で同じ結果・候補数・ev 降順", ()
     assert.ok(c.agari >= 0 && c.agari <= 1 && c.lose >= 0 && c.lose <= 1);
     assert.ok(c.lose >= c.dealIn - 0.1); // 局全体の放銃率は即放銃率を（誤差を除き）下回らない
   }
-  assert.ok(["push", "fold"].includes(a.answerType));
+  assert.ok(["push", "fold", "mawashi"].includes(a.answerType));
+});
+
+test("answerType の3分類（push / fold / mawashi）", async () => {
+  const { candidateType, answerTypeOf } = await import("../docs/js/engine/oshihiki.js");
+  const cs = [
+    { dealIn: 0.12, shanten: 1 }, // 危険を承知で押す
+    { dealIn: 0.005, shanten: 1 }, // 安全で手も保つ → 回し打ち
+    { dealIn: 0, shanten: 2 },     // 手を崩す → 降り
+  ];
+  assert.equal(candidateType(cs[0], cs), "push");
+  assert.equal(candidateType(cs[1], cs), "mawashi");
+  assert.equal(candidateType(cs[2], cs), "fold");
+  assert.equal(answerTypeOf(cs), "push");
+  const { createOshiSelector } = await import("../scripts/generate-oshihiki.mjs");
+  const sel = createOshiSelector(10); // push 4・fold 4・mawashi 2
+  const mk = (t) => ({ ok: true, stat: { answerType: t, genbutsu: false } });
+  for (let i = 0; i < 2; i++) assert.equal(sel.offer(mk("mawashi")), "ok");
+  assert.equal(sel.offer(mk("mawashi")), "mawashiQuota");
+  for (let i = 0; i < 4; i++) assert.equal(sel.offer(mk("push")), "ok");
+  assert.equal(sel.offer(mk("push")), "pushQuota");
 });

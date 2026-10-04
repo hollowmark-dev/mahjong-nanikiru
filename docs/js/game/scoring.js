@@ -29,7 +29,7 @@ export function isRedPenalty(problem, tile) {
 }
 
 // ---- 押し引き問題（SPEC §11.7）: 期待収支 ev の損失ベース ----
-export const OSHI_SCALE = 1500;   // この損失で基礎点 0
+export const OSHI_SCALE = 3000;   // この損失で基礎点 0
 export const OSHI_RED_LOSS = 300; // 赤5を切る減点（損失に足す）
 
 export function isOshihiki(problem) {
@@ -38,8 +38,8 @@ export function isOshihiki(problem) {
 
 export function oshiRankOf(loss) {
   if (loss <= 0) return "最善";
-  if (loss <= 150) return "好手";
-  if (loss <= 450) return "次善";
+  if (loss <= 300) return "好手";
+  if (loss <= 900) return "次善";
   return "悪手";
 }
 

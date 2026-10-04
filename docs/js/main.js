@@ -150,12 +150,10 @@ async function boot() {
     showError("問題データを読み込めませんでした。");
     return;
   }
-  // 押し引き問題: 本物が無ければ sample を読む。どちらも読めなければエラー
-  // （今日の10問の構成が日によって変わるとランキングが不公平になるため）
+  // 押し引き問題: 読めなければエラー（sample へのフォールバックはしない。
+  // 公開時にダミーで黙って動くのを防ぎ、日によって構成が変わるとランキングが不公平になるため）
   try {
-    let data;
-    try { data = await loadJson("data/problems-oshihiki.json"); }
-    catch { data = await loadJson("data/problems-oshihiki.sample.json"); }
+    const data = await loadJson("data/problems-oshihiki.json");
     if (!data || data.version !== 1 || data.kind !== "oshihiki") throw new Error("押し引きデータの版が違います");
     if (!Array.isArray(data.problems) || data.problems.length === 0) throw new Error("押し引き問題がありません");
     // 問題ごとの kind はファイル全体の kind から付ける（採点・表示の分岐に使う）

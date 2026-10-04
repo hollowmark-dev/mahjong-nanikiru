@@ -14,9 +14,12 @@ import { scoreHand } from "./score.js";
 
 export const OSHIHIKI_MODEL = Object.freeze({
   ...DEFAULT_MODEL,
-  seqWeight: 0.75,         // ブロックを順子にする確率
-  nonRyanmenAccept: 0.6,   // 両面以外の待ちを採用する確率
-  pushThreshold: 0.08,     // 1シャンテンで押す打牌の dealIn 上限
+  seqWeight: 0.65,         // ブロックを順子にする確率（較正: scripts/calibrate-oshihiki.mjs）
+  nonRyanmenAccept: 0.5,   // 両面以外の待ちを採用する確率（同上）
+  otherDealInRate: 0.3,    // 他家（リーチ者以外）がリーチ者の待ちの牌を実際に切る確率
+  goodUkeire: 12,          // 1シャンテンの受け入れがこの枚数以上なら良形
+  pushThresholdGood: 0.12, // 良形1シャンテンで押す打牌の dealIn 上限（定説チェックで決めた値）
+  pushThresholdBad: 0.06,  // 愚形1シャンテンで押す打牌の dealIn 上限（同上）
 });
 
 const SEAT_KEYS = ["self", "shimo", "toimen", "kami"];
@@ -182,10 +185,14 @@ export function prepareTrials(state, info, trials, seed, model = OSHIHIKI_MODEL)
     ura[i] = doraFromIndicator(kindToStr(rest[poolSize] >> 1));
   }
   const ev = buildEvents(trials, len, state.turn, seed, model);
+  // 他家（リーチ者以外）がリーチ者の待ちを実際に切るか
+  const otherOk = new Uint8Array(trials * len);
+  const rng2 = createRng((seed ^ 0x51ed270b) >>> 0);
+  for (let j = 0; j < trials * len; j++) if (rng2() < model.otherDealInRate) otherOk[j] = 1;
   const dealIn = new Float64Array(34);
   for (let i = 0; i < trials; i++) for (let k = 0; k < 34; k++) dealIn[k] += waits[i * 34 + k];
   for (let k = 0; k < 34; k++) dealIn[k] /= trials;
-  return { trials, len, waits, rHand, rRed, pools, ura, endRound: ev.endRound, ronOk: ev.ronOk, dealIn };
+  return { trials, len, waits, rHand, rRed, pools, ura, endRound: ev.endRound, ronOk: ev.ronOk, otherOk, dealIn };
 }
 
 // ---------------- 和了点 ----------------
@@ -217,7 +224,7 @@ export const END = Object.freeze({ NONE: 0, WIN: 1, DEALIN: 2, RTSUMO: 3, OTHER:
 export function evaluateOshihikiRaw(state, { trials = 10000, seed = 1, model = OSHIHIKI_MODEL } = {}) {
   const info = prepareOshihiki(state);
   const T = prepareTrials(state, info, trials, seed, model);
-  const { len, waits, rHand, rRed, pools, ura, endRound, ronOk, dealIn } = T;
+  const { len, waits, rHand, rRed, pools, ura, endRound, ronOk, otherOk, dealIn } = T;
   const score = makeScorer(info, state);
   const graph = createGraph();
   const r = info.r;
@@ -228,7 +235,23 @@ export function evaluateOshihikiRaw(state, { trials = 10000, seed = 1, model = O
   const redIn = new Uint8Array(34);
   const rc = new Uint8Array(34);
   const candidates = [];
-  const thr = model.pushThreshold;
+  // 1シャンテンの手 n に t をツモったとき、シャンテン数を保つ・下げる打牌 [打牌, 行き先] の一覧（kind 昇順）
+  const keepOptions = (n, t) => {
+    if (!n.keep) n.keep = new Array(34);
+    let list = n.keep[t];
+    if (list) return list;
+    list = [];
+    const c = Int8Array.from(n.counts);
+    c[t]++;
+    for (let dd = 0; dd < 34; dd++) {
+      if (c[dd] === 0) continue;
+      c[dd]--;
+      if (shanten(c) <= n.s) list.push([dd, graph.node(c)]);
+      c[dd]++;
+    }
+    n.keep[t] = list;
+    return list;
+  };
   const fold = { counts: new Int8Array(34), s: 99, eff: [], isEff: null }; // 降りた後の手（枚数だけ）
 
   // 危険度（シミュレーション中に通った牌は 0）
@@ -298,7 +321,12 @@ export function evaluateOshihikiRaw(state, { trials = 10000, seed = 1, model = O
         // 頭ハネ: 打牌者の次の席から順に
         for (let q = 1; q <= 3; q++) {
           const t = (s + q) & 3;
-          if (t === r && waits[wb + x]) { result = END.OTHER; pts = myRiichi ? -1000 : 0; return true; }
+          if (t === r && waits[wb + x]) {
+            // 他家はリーチに対して危険牌を抱えるので、待ちの牌は確率 otherDealInRate でだけ実際に切られる。
+            // 切られなかった（抱えた）ときは、その打牌は通過牌として扱わず、自家のロンも無い
+            if (otherOk[base + j] === 1) { result = END.OTHER; pts = myRiichi ? -1000 : 0; return true; }
+            return false;
+          }
           if (t === 0 && myRiichi && n.isEff[x] === 1 && ronOk[base + j] === 1 && !isFuriten(n, river, -1)) {
             result = END.WIN; pts = myWin(x, false, code & 1) + 1000;
             return true;
@@ -326,30 +354,32 @@ export function evaluateOshihikiRaw(state, { trials = 10000, seed = 1, model = O
             // 打牌を決める
             let d = -1, next = null, declare = false;
             if (!folded && n.s === 1) {
-              // §5 の方策の打牌
-              if (n.isEff[t] === 1) {
-                const list = graph.transitions(n, t);
-                let bd = list[0][0], bn = list[0][1];
-                if (bn.s === 0) {
-                  let bf = isFuriten(bn, river, bd), bu = remainingCount(bn, vis);
-                  for (let q = 1; q < list.length; q++) {
-                    const [dd, m] = list[q];
-                    const f = isFuriten(m, river, dd), u = remainingCount(m, vis);
-                    if ((bf && !f) || (bf === f && u > bu)) { bd = dd; bn = m; bf = f; bu = u; }
-                  }
-                } else {
-                  let bu = remainingCount(bn, vis);
-                  for (let q = 1; q < list.length; q++) {
-                    const u = remainingCount(list[q][1], vis);
-                    if (u > bu) { bu = u; bd = list[q][0]; bn = list[q][1]; }
-                  }
-                }
-                d = bd; next = bn;
+              // 1シャンテン: シャンテン数を保つ（または下げる）打牌のうち最も安全なものが閾値以下なら押す
+              const th = remainingCount(n, vis) >= model.goodUkeire ? model.pushThresholdGood : model.pushThresholdBad;
+              const list = keepOptions(n, t);
+              let safest = 2;
+              for (let q = 0; q < list.length; q++) { const v = danger(list[q][0]); if (v < safest) safest = v; }
+              if (safest > th) {
+                folded = true;
               } else {
-                d = t; next = n;
+                // 閾値以下の打牌の中で: テンパイが取れるなら（非フリテン優先 → 待ち枚数）、取れなければ受け入れ最大。同率は kind 小
+                let bd = -1, bn = null, bf = true, bu = -1;
+                for (let q = 0; q < list.length; q++) {
+                  const [dd, m] = list[q];
+                  if (danger(dd) > th) continue;
+                  const u = remainingCount(m, vis);
+                  if (bn === null) { bd = dd; bn = m; bu = u; bf = m.s === 0 ? isFuriten(m, river, dd) : true; continue; }
+                  if (m.s !== bn.s) {
+                    if (m.s < bn.s) { bd = dd; bn = m; bu = u; bf = m.s === 0 ? isFuriten(m, river, dd) : true; }
+                    continue;
+                  }
+                  if (m.s === 0) {
+                    const f = isFuriten(m, river, dd);
+                    if ((bf && !f) || (bf === f && u > bu)) { bd = dd; bn = m; bf = f; bu = u; }
+                  } else if (u > bu) { bd = dd; bn = m; bu = u; }
+                }
+                d = bd; next = bn; declare = bn.s === 0;
               }
-              if (danger(d) <= thr) declare = next.s === 0;
-              else { d = -1; folded = true; }
             } else if (!folded) {
               folded = true; // 2シャンテン以上は降りる
             }
@@ -413,10 +443,18 @@ export function toOshihikiCandidateJson(c, trials) {
   };
 }
 
-// answerType: best の dealIn が候補中の最小値＋0.01 以下なら "fold"
+// answerType（§11.5）: 候補 c が best だったときの分類
+//   push    = dealIn > minD + 0.01
+//   mawashi = dealIn ≤ minD + 0.01 かつ シャンテン = minS
+//   fold    = dealIn ≤ minD + 0.01 かつ シャンテン > minS
+export function candidateType(c, cands) {
+  const minD = Math.min(...cands.map((x) => x.dealIn));
+  const minS = Math.min(...cands.map((x) => x.shanten));
+  if (c.dealIn > minD + 0.01) return "push";
+  return c.shanten === minS ? "mawashi" : "fold";
+}
 export function answerTypeOf(cands) {
-  const minD = Math.min(...cands.map((c) => c.dealIn));
-  return cands[0].dealIn <= minD + 0.01 ? "fold" : "push";
+  return candidateType(cands[0], cands);
 }
 
 export function evaluateOshihiki(state, { trials = 10000, seed = 1, model = OSHIHIKI_MODEL } = {}) {

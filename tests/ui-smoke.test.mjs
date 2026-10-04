@@ -93,8 +93,14 @@ test("rivers: 各家 turn-1 枚、妥当な牌、手牌＋ドラ表示＋河で�
 // 押し引き問題（本物があれば本物、なければ sample）
 import { existsSync } from "node:fs";
 test("押し引き問題の形式（SPEC §11.2）", () => {
+  // sample を直接読む（アプリは sample にフォールバックしない）。本物があれば本物も検査する
+  const files = [new URL("../docs/data/problems-oshihiki.sample.json", import.meta.url)];
   const real = new URL("../docs/data/problems-oshihiki.json", import.meta.url);
-  const file = existsSync(real) ? real : new URL("../docs/data/problems-oshihiki.sample.json", import.meta.url);
+  if (existsSync(real)) files.push(real);
+  for (const file of files) checkOshi(file);
+});
+
+function checkOshi(file) {
   const data = JSON.parse(readFileSync(file, "utf8"));
   assert.equal(data.version, 1);
   assert.equal(data.kind, "oshihiki");
@@ -103,7 +109,7 @@ test("押し引き問題の形式（SPEC §11.2）", () => {
     const p = { ...p0, kind: "oshihiki" }; // main.js と同じく、読み込み時に kind を付ける
     assert.equal(p.hand.length, 13);
     assert.deepEqual(p.hand, sortTiles(p.hand));
-    assert.ok(["push", "fold"].includes(p.answerType), p.id);
+    assert.ok(["push", "fold", "mawashi"].includes(p.answerType), p.id);
     assert.ok(["shimo", "toimen", "kami"].includes(p.riichi.seat), p.id);
     const river = p.rivers[p.riichi.seat];
     assert.ok(p.riichi.index >= 0 && p.riichi.index < river.length, `${p.id} 宣言牌の位置`);
@@ -119,4 +125,4 @@ test("押し引き問題の形式（SPEC §11.2）", () => {
       assert.ok(r.points >= 0 && r.points <= 150);
     }
   }
-});
+}

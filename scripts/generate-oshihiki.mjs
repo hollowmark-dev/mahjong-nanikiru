@@ -12,7 +12,7 @@ import { createRng, hashString, shuffleInPlace } from "../docs/js/engine/rng.js"
 import { shanten } from "../docs/js/engine/shanten.js";
 import { discardOptions } from "../docs/js/engine/ukeire.js";
 import {
-  evaluateOshihikiRaw, toOshihikiCandidateJson, answerTypeOf, OSHIHIKI_MODEL, waitsOf,
+  evaluateOshihikiRaw, toOshihikiCandidateJson, answerTypeOf, candidateType, OSHIHIKI_MODEL, waitsOf,
 } from "../docs/js/engine/oshihiki.js";
 import { idKind, idStr, chooseDiscard } from "./generate.mjs";
 
@@ -110,14 +110,14 @@ function attempt(a, seed, trials) {
   const raw = evaluateOshihikiRaw(pos, { trials, seed: hashString(`${seed}:oeval:${a}`) });
   const c = raw.candidates;
   const best = c[0];
-  // ベタオリの第一打（dealIn 最小、同率は ev 大）
-  const fold1 = c.reduce((m, x) => (x.dealIn < m.dealIn ? x : m), c[0]);
-  const sigFold = fold1 !== best && significant(best.payoff, fold1.payoff, trials, FILTER.sigma);
-  const sigSecond = c.length > 1 && significant(best.payoff, c[1].payoff, trials, FILTER.sigma);
-  if (!sigFold && !sigSecond) return { a, ok: false, reason: "notSignificant", evaluated: true };
+  // 有意差: best と「best と異なる answerType の候補で ev 最大のもの」（c は ev 降順）
+  const answerType = answerTypeOf(c);
+  const rival = c.find((x) => candidateType(x, c) !== answerType);
+  if (!rival) return { a, ok: false, reason: "oneType", evaluated: true };
+  if (!significant(best.payoff, rival.payoff, trials, FILTER.sigma)) return { a, ok: false, reason: "notSignificant", evaluated: true };
+  const fold1 = c.reduce((m, x) => (x.dealIn < m.dealIn ? x : m), c[0]); // ベタオリの第一打（統計用）
 
   const candidates = c.map((x) => toOshihikiCandidateJson(x, trials));
-  const answerType = answerTypeOf(c);
   const riichiRiver = pos.rivers[pos.riichi.seat].map(kindOf);
   const genbutsu = [...new Set([...pos.hand, pos.draw].map(kindOf))].some((k) => riichiRiver.includes(k));
   return {
@@ -127,16 +127,20 @@ function attempt(a, seed, trials) {
       answerType, genbutsu, turn: pos.turn,
       bestEv: candidates[0].ev,
       lossSecond: c.length > 1 ? (best.evSum - c[1].evSum) / trials : 0,
+      lossRival: (best.evSum - rival.evSum) / trials,
+      losses: c.slice(1).map((x) => (best.evSum - x.evSum) / trials),
       lossFold: (best.evSum - fold1.evSum) / trials,
       shanten: best.shanten,
     },
   };
 }
 
-// 採用順に枠を判定: push/fold 半々、現物ありの問題は genbutsuRatio まで
+// 採用順に枠を判定: push 40%・fold 40%・mawashi 20%（端数は push・fold へ）、現物ありの問題は genbutsuRatio まで
 export function createOshiSelector(count) {
-  const quota = { push: Math.floor(count / 2), fold: count - Math.floor(count / 2) };
-  const used = { push: 0, fold: 0 };
+  const m = Math.floor(count * 0.2);
+  const p = Math.ceil((count - m) / 2);
+  const quota = { push: p, fold: count - m - p, mawashi: m };
+  const used = { push: 0, fold: 0, mawashi: 0 };
   const gMax = Math.floor(count * FILTER.genbutsuRatio);
   let g = 0;
   return {
@@ -251,6 +255,8 @@ async function main() {
   const hist = (arr) => arr.reduce((m, x) => ((m[x] = (m[x] || 0) + 1), m), {});
   const evs = st.map((s) => s.bestEv);
   const lossS = st.map((s) => s.lossSecond), lossF = st.map((s) => s.lossFold).filter((x) => x > 0);
+  const lossR = st.map((s) => s.lossRival), lossAll = st.flatMap((s) => s.losses);
+  const basePts = (L) => 100 * Math.max(0, 1 - L / 3000);
   console.log(`出力: ${outPath}`);
   console.log(`採用 ${problems.length} 問 / 試行 ${prefix} 件（評価まで進んだもの ${evaluated} 件）`);
   console.log("不採用の内訳:", reasons);
@@ -259,6 +265,12 @@ async function main() {
   console.log(`best の ev: 最小 ${pct(evs, 0)} / 10% ${pct(evs, 0.1)} / 中央 ${pct(evs, 0.5)} / 90% ${pct(evs, 0.9)} / 最大 ${pct(evs, 1)}`);
   console.log(`best と次点の損失: 中央 ${pct(lossS, 0.5).toFixed(0)} / 90% ${pct(lossS, 0.9).toFixed(0)} / 最大 ${pct(lossS, 1).toFixed(0)}`);
   console.log(`best とベタオリ第一打の損失（best≠第一打のとき）: 件数 ${lossF.length} / 中央 ${pct(lossF, 0.5)?.toFixed?.(0)} / 90% ${pct(lossF, 0.9)?.toFixed?.(0)}`);
+  console.log(`best と反対の型の最良候補の損失（有意差の対象）: 中央 ${pct(lossR, 0.5).toFixed(0)} / 90% ${pct(lossR, 0.9).toFixed(0)}`);
+  console.log(`全候補の損失: 25% ${pct(lossAll, 0.25).toFixed(0)} / 中央 ${pct(lossAll, 0.5).toFixed(0)} / 75% ${pct(lossAll, 0.75).toFixed(0)} / 90% ${pct(lossAll, 0.9).toFixed(0)}（${lossAll.length} 件）`);
+  const bp = lossAll.map(basePts), bpS = lossS.map(basePts);
+  const bins = (arr) => arr.reduce((m, x) => { const b = x >= 100 ? "100" : `${Math.floor(x / 20) * 20}-${Math.floor(x / 20) * 20 + 19}`; m[b] = (m[b] || 0) + 1; return m; }, {});
+  console.log("尺度3000の基礎点 — 次点:", bins(bpS), " 中央", pct(bpS, 0.5).toFixed(0));
+  console.log("尺度3000の基礎点 — 全候補:", bins(bp), " 中央", pct(bp, 0.5).toFixed(0), " 0点の割合", (bp.filter((x) => x === 0).length / Math.max(1, bp.length)).toFixed(2));
   console.log(`所要時間: ${sec.toFixed(1)} 秒（${args.threads} スレッド）。評価1件あたり ${(sec * args.threads / Math.max(1, evaluated)).toFixed(2)} 秒`);
   process.exit(0);
 }

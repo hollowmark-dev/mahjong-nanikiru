@@ -983,7 +983,7 @@
      "3s"
     ],
     "toimen": [
-     "8s",
+     "5p",
      "5z",
      "7s",
      "9p",
@@ -1003,8 +1003,8 @@
      "3m",
      "2m",
      "6z",
-     "9s",
-     "8p"
+     "8s",
+     "9s"
     ]
    },
    "riichi": {
@@ -1012,21 +1012,6 @@
     "index": 5
    },
    "candidates": [
-    {
-     "tile": "8s",
-     "shanten": 1,
-     "ukeire": 12,
-     "ukeireTiles": [
-      "2m",
-      "5m",
-      "1s",
-      "4s"
-     ],
-     "dealIn": 0.0018,
-     "agari": 0.1917,
-     "lose": 0.2018,
-     "ev": 267
-    },
     {
      "tile": "6p",
      "shanten": 2,
@@ -1045,6 +1030,24 @@
      "agari": 0.03,
      "lose": 0.0508,
      "ev": -71
+    },
+    {
+     "tile": "5p",
+     "shanten": 2,
+     "ukeire": 17,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "5p",
+      "1s",
+      "4s",
+      "5s",
+      "8s"
+     ],
+     "dealIn": 0.0013,
+     "agari": 0.03,
+     "lose": 0.0513,
+     "ev": -74
     },
     {
      "tile": "7m",
@@ -1079,6 +1082,21 @@
      "agari": 0.1728,
      "lose": 0.3275,
      "ev": -619
+    },
+    {
+     "tile": "8s",
+     "shanten": 1,
+     "ukeire": 12,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "1s",
+      "4s"
+     ],
+     "dealIn": 0.1278,
+     "agari": 0.1675,
+     "lose": 0.3278,
+     "ev": -660
     },
     {
      "tile": "8m",
@@ -1182,24 +1200,6 @@
      "ev": -1438
     },
     {
-     "tile": "5p",
-     "shanten": 2,
-     "ukeire": 18,
-     "ukeireTiles": [
-      "2m",
-      "5m",
-      "5p",
-      "1s",
-      "4s",
-      "5s",
-      "8s"
-     ],
-     "dealIn": 0.2533,
-     "agari": 0.03,
-     "lose": 0.3033,
-     "ev": -1561
-    },
-    {
      "tile": "5s",
      "shanten": 1,
      "ukeire": 12,
@@ -1215,7 +1215,7 @@
      "ev": -1575
     }
    ],
-   "best": "8s",
+   "best": "6p",
    "answerType": "fold"
   },
   {
@@ -1274,15 +1274,15 @@
      "7m"
     ],
     "kami": [
-     "1z",
+     "6p",
      "1s",
      "1s",
      "6s",
-     "6p",
      "2s",
      "6z",
      "8m",
-     "3m"
+     "3m",
+     "5s"
     ]
    },
    "riichi": {
@@ -1291,25 +1291,9 @@
    },
    "candidates": [
     {
-     "tile": "1z",
-     "shanten": 1,
-     "ukeire": 11,
-     "ukeireTiles": [
-      "2m",
-      "5m",
-      "3s",
-      "6s",
-      "9s"
-     ],
-     "dealIn": 0.0003,
-     "agari": 0.186,
-     "lose": 0.2003,
-     "ev": 232
-    },
-    {
      "tile": "6p",
      "shanten": 2,
-     "ukeire": 14,
+     "ukeire": 15,
      "ukeireTiles": [
       "2m",
       "5m",
@@ -1323,6 +1307,29 @@
      "agari": 0.03,
      "lose": 0.0503,
      "ev": -68
+    },
+    {
+     "tile": "5s",
+     "shanten": 2,
+     "ukeire": 26,
+     "ukeireTiles": [
+      "1m",
+      "2m",
+      "3m",
+      "4m",
+      "5m",
+      "2s",
+      "3s",
+      "4s",
+      "5s",
+      "6s",
+      "9s",
+      "1z"
+     ],
+     "dealIn": 0.0027,
+     "agari": 0.03,
+     "lose": 0.0528,
+     "ev": -82
     },
     {
      "tile": "3m",
@@ -1349,9 +1356,25 @@
      "ev": -84
     },
     {
+     "tile": "1z",
+     "shanten": 1,
+     "ukeire": 11,
+     "ukeireTiles": [
+      "2m",
+      "5m",
+      "3s",
+      "6s",
+      "9s"
+     ],
+     "dealIn": 0.0803,
+     "agari": 0.1711,
+     "lose": 0.2802,
+     "ev": -353
+    },
+    {
      "tile": "2m",
      "shanten": 1,
-     "ukeire": 9,
+     "ukeire": 10,
      "ukeireTiles": [
       "3s",
       "6s",
@@ -1359,9 +1382,9 @@
       "1z"
      ],
      "dealIn": 0.1123,
-     "agari": 0.1545,
+     "agari": 0.1598,
      "lose": 0.3123,
-     "ev": -668
+     "ev": -628
     },
     {
      "tile": "8s",
@@ -1392,7 +1415,7 @@
     {
      "tile": "3s",
      "shanten": 1,
-     "ukeire": 11,
+     "ukeire": 12,
      "ukeireTiles": [
       "2m",
       "5m",
@@ -1401,9 +1424,9 @@
       "1z"
      ],
      "dealIn": 0.1445,
-     "agari": 0.1591,
+     "agari": 0.1643,
      "lose": 0.3445,
-     "ev": -823
+     "ev": -784
     },
     {
      "tile": "7s",
@@ -1434,7 +1457,7 @@
     {
      "tile": "7p",
      "shanten": 2,
-     "ukeire": 20,
+     "ukeire": 21,
      "ukeireTiles": [
       "2m",
       "5m",
@@ -1501,7 +1524,7 @@
     {
      "tile": "5p",
      "shanten": 2,
-     "ukeire": 18,
+     "ukeire": 19,
      "ukeireTiles": [
       "2m",
       "5m",
@@ -1516,32 +1539,9 @@
      "agari": 0.03,
      "lose": 0.2748,
      "ev": -1393
-    },
-    {
-     "tile": "5s",
-     "shanten": 2,
-     "ukeire": 26,
-     "ukeireTiles": [
-      "1m",
-      "2m",
-      "3m",
-      "4m",
-      "5m",
-      "2s",
-      "3s",
-      "4s",
-      "5s",
-      "6s",
-      "9s",
-      "1z"
-     ],
-     "dealIn": 0.2268,
-     "agari": 0.03,
-     "lose": 0.2768,
-     "ev": -1404
     }
    ],
-   "best": "1z",
+   "best": "6p",
    "answerType": "fold"
   },
   {
@@ -1577,7 +1577,7 @@
      "1s"
     ],
     "shimo": [
-     "1z",
+     "3p",
      "2z",
      "5p",
      "2s",
@@ -1615,7 +1615,7 @@
     {
      "tile": "6s",
      "shanten": 1,
-     "ukeire": 20,
+     "ukeire": 21,
      "ukeireTiles": [
       "5m",
       "6m",
@@ -1628,14 +1628,14 @@
       "1z"
      ],
      "dealIn": 0.0018,
-     "agari": 0.2396,
+     "agari": 0.2456,
      "lose": 0.2018,
-     "ev": 631
+     "ev": 677
     },
     {
      "tile": "9p",
      "shanten": 1,
-     "ukeire": 24,
+     "ukeire": 25,
      "ukeireTiles": [
       "5m",
       "6m",
@@ -1649,14 +1649,14 @@
       "1z"
      ],
      "dealIn": 0.0865,
-     "agari": 0.2412,
+     "agari": 0.2466,
      "lose": 0.2865,
-     "ev": 143
+     "ev": 185
     },
     {
      "tile": "4p",
      "shanten": 2,
-     "ukeire": 36,
+     "ukeire": 37,
      "ukeireTiles": [
       "5m",
       "6m",
@@ -1680,9 +1680,53 @@
      "ev": -71
     },
     {
+     "tile": "3p",
+     "shanten": 2,
+     "ukeire": 35,
+     "ukeireTiles": [
+      "5m",
+      "6m",
+      "7m",
+      "8m",
+      "9m",
+      "3p",
+      "7p",
+      "8p",
+      "9p",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.0013,
+     "agari": 0.03,
+     "lose": 0.0513,
+     "ev": -74
+    },
+    {
+     "tile": "8m",
+     "shanten": 1,
+     "ukeire": 24,
+     "ukeireTiles": [
+      "7p",
+      "8p",
+      "9p",
+      "4s",
+      "6s",
+      "7s",
+      "8s",
+      "1z"
+     ],
+     "dealIn": 0.119,
+     "agari": 0.2326,
+     "lose": 0.319,
+     "ev": -114
+    },
+    {
      "tile": "1z",
      "shanten": 2,
-     "ukeire": 33,
+     "ukeire": 34,
      "ukeireTiles": [
       "5m",
       "6m",
@@ -1698,34 +1742,15 @@
       "8s",
       "1z"
      ],
-     "dealIn": 0.003,
+     "dealIn": 0.088,
      "agari": 0.03,
-     "lose": 0.053,
-     "ev": -84
-    },
-    {
-     "tile": "8m",
-     "shanten": 1,
-     "ukeire": 23,
-     "ukeireTiles": [
-      "7p",
-      "8p",
-      "9p",
-      "4s",
-      "6s",
-      "7s",
-      "8s",
-      "1z"
-     ],
-     "dealIn": 0.119,
-     "agari": 0.2273,
-     "lose": 0.319,
-     "ev": -155
+     "lose": 0.138,
+     "ev": -585
     },
     {
      "tile": "2p",
      "shanten": 2,
-     "ukeire": 36,
+     "ukeire": 37,
      "ukeireTiles": [
       "5m",
       "6m",
@@ -1751,7 +1776,7 @@
     {
      "tile": "7m",
      "shanten": 2,
-     "ukeire": 36,
+     "ukeire": 37,
      "ukeireTiles": [
       "4m",
       "5m",
@@ -1774,34 +1799,9 @@
      "ev": -972
     },
     {
-     "tile": "3p",
-     "shanten": 2,
-     "ukeire": 35,
-     "ukeireTiles": [
-      "5m",
-      "6m",
-      "7m",
-      "8m",
-      "9m",
-      "3p",
-      "7p",
-      "8p",
-      "9p",
-      "4s",
-      "6s",
-      "7s",
-      "8s",
-      "1z"
-     ],
-     "dealIn": 0.1542,
-     "agari": 0.03,
-     "lose": 0.2042,
-     "ev": -977
-    },
-    {
      "tile": "6m",
      "shanten": 2,
-     "ukeire": 33,
+     "ukeire": 34,
      "ukeireTiles": [
       "5m",
       "6m",
@@ -1825,7 +1825,7 @@
     {
      "tile": "5s",
      "shanten": 2,
-     "ukeire": 37,
+     "ukeire": 38,
      "ukeireTiles": [
       "5m",
       "6m",
@@ -1849,7 +1849,7 @@
     }
    ],
    "best": "6s",
-   "answerType": "fold"
+   "answerType": "mawashi"
   },
   {
    "id": "o00008",
@@ -2099,7 +2099,7 @@
     }
    ],
    "best": "3z",
-   "answerType": "fold"
+   "answerType": "mawashi"
   },
   {
    "id": "o00009",
@@ -2287,7 +2287,7 @@
     }
    ],
    "best": "7z",
-   "answerType": "fold"
+   "answerType": "mawashi"
   },
   {
    "id": "o00010",
@@ -3081,7 +3081,7 @@
     }
    ],
    "best": "3m",
-   "answerType": "fold"
+   "answerType": "mawashi"
   }
  ]
 }

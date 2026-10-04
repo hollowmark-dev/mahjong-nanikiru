@@ -4,6 +4,11 @@ import { createTable } from "./table.js";
 import { tileLabel, parseTile, kindToStr } from "../engine/tiles.js";
 
 const RANK_CLASS = { 最善: "r-best", 好手: "r-good", 次善: "r-ok", 悪手: "r-bad", 時間切れ: "r-bad" };
+const ANSWER_TEXT = {
+  push: "この局面は押しが正解",
+  fold: "この局面は降りが正解",
+  mawashi: "この局面は回し打ち（安全に手を保つ）が正解",
+};
 const yen = (v) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v)}`;
 
 export function renderExplainOshi(root, { problem, index, total, answer, result, isLast, onNext }) {
@@ -28,8 +33,8 @@ export function renderExplainOshi(root, { problem, index, total, answer, result,
     h("dt", {}, "期待収支"), h("dd", {}, `あなた ${yen(mineC.ev)} ／ 最善 ${yen(bestC.ev)}（点）`),
     h("dt", {}, "損失"), h("dd", {}, lossText),
     h("dt", {}, "基礎点"), h("dd", {}, result.timedOut ? "0（時間切れは0点）"
-      : result.capped ? "100 × (1 − 損失/1500) < 0 → 0（1500点以上の損失は0点）"
-        : `100 × (1 − ${Math.round(result.loss)}/1500) = ${result.base.toFixed(1)}`),
+      : result.capped ? "100 × (1 − 損失/3000) < 0 → 0（3000点以上の損失は0点）"
+        : `100 × (1 − ${Math.round(result.loss)}/3000) = ${result.base.toFixed(1)}`),
     h("dt", {}, "時間係数"), h("dd", {}, result.timedOut ? "－（時間切れ）" : `×${result.factor.toFixed(2)}（残り ${secText(result.remainingMs)}）`),
     h("dt", {}, "得点"), h("dd", { class: "pts" }, `${result.points}点`),
   );
@@ -66,7 +71,7 @@ export function renderExplainOshi(root, { problem, index, total, answer, result,
     h("div", { class: "play-head" }, h("div", { class: "qno" }, `問 ${index + 1}/${total} 解説`), h("div", { class: "kind-tag" }, "押し引き")),
     createTable(problem).el,
     handRow,
-    h("h2", { class: "oshi-verdict" }, problem.answerType === "fold" ? "この局面は降りが正解" : "この局面は押しが正解"),
+    h("h2", { class: "oshi-verdict" }, ANSWER_TEXT[problem.answerType] || ANSWER_TEXT.push),
     h("div", { class: "verdict" },
       h("span", { class: `rank ${RANK_CLASS[result.rank]}` }, result.rank),
       h("span", { class: "verdict-pts" }, `${result.points}点`)),
