@@ -270,7 +270,8 @@ export function evaluateOshihikiRaw(state, { trials = 10000, seed = 1, model = O
       river.set(info.selfRiver);
       safe.fill(0);
       redIn.set(info.myRed);
-      if (redIn[d0] && c13[d0] === 0) redIn[d0] = 0; // 赤は最後まで残す
+      const d0Red = redIn[d0] && c13[d0] === 0 ? 1 : 0; // 赤は最後まで残す（最後の1枚なら赤が出る）
+      if (d0Red) redIn[d0] = 0;
       const aka = () => { let a = 0; for (const k of RED_KIND) a += redIn[k]; return a; };
       let n = start;
       let myRiichi = false, folded = false;
@@ -289,11 +290,11 @@ export function evaluateOshihikiRaw(state, { trials = 10000, seed = 1, model = O
         rc[k]++;
         return score(0, rc, k, tsumo, aka() + winRed, ura[i]);
       };
-      // 自家の打牌 k（declare: この打牌でリーチ宣言）。放銃なら true
-      const myDiscard = (k, declare) => {
+      // 自家の打牌 k（declare: この打牌でリーチ宣言、red: 切る牌が赤5）。放銃なら true
+      const myDiscard = (k, declare, red) => {
         if (waits[wb + k]) {
           result = END.DEALIN;
-          pts = -riichiWin(k, false, 0) - (myRiichi ? 1000 : 0);
+          pts = -riichiWin(k, false, red) - (myRiichi ? 1000 : 0);
           return true;
         }
         river[k] = 1; safe[k] = 1;
@@ -337,7 +338,7 @@ export function evaluateOshihikiRaw(state, { trials = 10000, seed = 1, model = O
       };
 
       // 出題局面の打牌
-      if (!myDiscard(d0, start.s === 0)) {
+      if (!myDiscard(d0, start.s === 0, d0Red)) {
         const stop = Math.min(len, 3 + 4 * endRound[i]);
         for (let s = 1; s <= 3 && used < stop && result === END.NONE; s++) {
           if (otherDiscard(s, used++)) break;
@@ -349,36 +350,43 @@ export function evaluateOshihikiRaw(state, { trials = 10000, seed = 1, model = O
           vis[t]++;
           if (myRiichi) {
             if (n.isEff[t] === 1) { result = END.WIN; pts = myWin(t, true, code & 1) + 1000; break; }
-            if (myDiscard(t, false)) break;
+            if (myDiscard(t, false, code & 1)) break;
           } else {
             // 打牌を決める
             let d = -1, next = null, declare = false;
             if (!folded && n.s === 1) {
-              // 1シャンテン: シャンテン数を保つ（または下げる）打牌のうち最も安全なものが閾値以下なら押す
-              const th = remainingCount(n, vis) >= model.goodUkeire ? model.pushThresholdGood : model.pushThresholdBad;
               const list = keepOptions(n, t);
-              let safest = 2;
-              for (let q = 0; q < list.length; q++) { const v = danger(list[q][0]); if (v < safest) safest = v; }
-              if (safest > th) {
-                folded = true;
-              } else {
-                // 閾値以下の打牌の中で: テンパイが取れるなら（非フリテン優先 → 待ち枚数）、取れなければ受け入れ最大。同率は kind 小
-                let bd = -1, bn = null, bf = true, bu = -1;
+              if (n.isEff[t] === 1) {
+                // ツモでテンパイが取れる: 閾値をかけずにテンパイを取る（§11.4 方策1・2）。
+                // テンパイ打牌が複数なら 非フリテン → 待ち枚数 → dealIn 小 → kind 小
+                let bd = -1, bn = null, bf = true, bu = -1, bv = 2;
                 for (let q = 0; q < list.length; q++) {
                   const [dd, m] = list[q];
-                  if (danger(dd) > th) continue;
-                  const u = remainingCount(m, vis);
-                  if (bn === null) { bd = dd; bn = m; bu = u; bf = m.s === 0 ? isFuriten(m, river, dd) : true; continue; }
-                  if (m.s !== bn.s) {
-                    if (m.s < bn.s) { bd = dd; bn = m; bu = u; bf = m.s === 0 ? isFuriten(m, river, dd) : true; }
-                    continue;
+                  if (m.s !== 0) continue;
+                  const f = isFuriten(m, river, dd), u = remainingCount(m, vis), v = danger(dd);
+                  if (bn === null || (bf && !f) || (bf === f && (u > bu || (u === bu && v < bv)))) {
+                    bd = dd; bn = m; bf = f; bu = u; bv = v;
                   }
-                  if (m.s === 0) {
-                    const f = isFuriten(m, river, dd);
-                    if ((bf && !f) || (bf === f && u > bu)) { bd = dd; bn = m; bf = f; bu = u; }
-                  } else if (u > bu) { bd = dd; bn = m; bu = u; }
                 }
-                d = bd; next = bn; declare = bn.s === 0;
+                d = bd; next = bn; declare = true;
+              } else {
+                // テンパイが取れない: シャンテン数を保つ打牌のうち最も安全なものが閾値以下なら押す
+                const th = remainingCount(n, vis) >= model.goodUkeire ? model.pushThresholdGood : model.pushThresholdBad;
+                let safest = 2;
+                for (let q = 0; q < list.length; q++) { const v = danger(list[q][0]); if (v < safest) safest = v; }
+                if (safest > th) {
+                  folded = true;
+                } else {
+                  // 閾値以下の打牌の中で受け入れ最大（同率は kind 小）
+                  let bd = -1, bn = null, bu = -1;
+                  for (let q = 0; q < list.length; q++) {
+                    const [dd, m] = list[q];
+                    if (danger(dd) > th) continue;
+                    const u = remainingCount(m, vis);
+                    if (u > bu) { bd = dd; bn = m; bu = u; }
+                  }
+                  d = bd; next = bn;
+                }
               }
             } else if (!folded) {
               folded = true; // 2シャンテン以上は降りる
@@ -401,9 +409,10 @@ export function evaluateOshihikiRaw(state, { trials = 10000, seed = 1, model = O
             }
             // 赤: ツモが赤なら持つ。切る種類が最後の1枚なら赤も出る
             if (code & 1) redIn[t] = 1;
-            if (next.counts[d] === 0) redIn[d] = 0;
+            let dRed = 0;
+            if (next.counts[d] === 0) { dRed = redIn[d]; redIn[d] = 0; }
             n = next;
-            if (myDiscard(d, declare)) break;
+            if (myDiscard(d, declare, dRed)) break;
           }
           for (let s = 1; s <= 3 && used < stop; s++) {
             if (otherDiscard(s, used++)) break;
@@ -444,10 +453,14 @@ export function toOshihikiCandidateJson(c, trials) {
 }
 
 // answerType（§11.5）: 候補 c が best だったときの分類
-//   push    = dealIn > minD + 0.01
-//   mawashi = dealIn ≤ minD + 0.01 かつ シャンテン = minS
-//   fold    = dealIn ≤ minD + 0.01 かつ シャンテン > minS
+//   fold（優先） = シャンテン ≥ 2、または和了率 0（和了を見ない手順）
+//   push         = dealIn > minD + 0.01
+//   mawashi      = dealIn ≤ minD + 0.01 かつ シャンテン = minS
+//   fold         = dealIn ≤ minD + 0.01 かつ シャンテン > minS
+// c は生の候補（agariN）でも JSON の候補（agari）でもよい
 export function candidateType(c, cands) {
+  const agari = c.agariN !== undefined ? c.agariN : c.agari;
+  if (c.shanten >= 2 || agari === 0) return "fold";
   const minD = Math.min(...cands.map((x) => x.dealIn));
   const minS = Math.min(...cands.map((x) => x.shanten));
   if (c.dealIn > minD + 0.01) return "push";

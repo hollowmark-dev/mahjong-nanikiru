@@ -132,8 +132,8 @@ function naive(state, trials, seed, model = OSHIHIKI_MODEL) {
       const safe = new Array(34).fill(0);
       const danger = (k) => (safe[k] ? 0 : T.dealIn[k]);
       let riichi = false, folded = false, res = END.NONE, p = 0;
-      const discard = (k, declare) => {
-        if (W.has(k)) { res = END.DEALIN; p = -pts(r, rh, k, false, T.rRed[i], ura) - (riichi ? 1000 : 0); return true; }
+      const discard = (k, declare, isRed) => {
+        if (W.has(k)) { res = END.DEALIN; p = -pts(r, rh, k, false, T.rRed[i] + isRed, ura) - (riichi ? 1000 : 0); return true; }
         river[k] = 1; safe[k] = 1;
         if (declare) riichi = true;
         return false;
@@ -164,7 +164,7 @@ function naive(state, trials, seed, model = OSHIHIKI_MODEL) {
         return false;
       };
       let used = 0;
-      if (!discard(d0, shanten(hand) === 0)) {
+      if (!discard(d0, shanten(hand) === 0, info.myRed[d0] && hand[d0] === 0 ? 1 : 0)) {
         const stop = Math.min(T.len, 3 + 4 * T.endRound[i]);
         for (let s = 1; s <= 3 && used < stop; s++) if (other(s, used++)) break;
         while (res === END.NONE && used < stop) {
@@ -174,40 +174,44 @@ function naive(state, trials, seed, model = OSHIHIKI_MODEL) {
             hand[t]++;
             if (shanten(hand) === -1) { hand[t]--; res = END.WIN; p = pts(0, hand, t, true, aka() + (code & 1), ura) + 1000; break; }
             hand[t]--;
-            if (discard(t, false)) break;
+            if (discard(t, false, code & 1)) break;
           } else {
-            const s13 = shanten(hand); // ツモ前の13枚
+            // SPEC §11.4 の方策を文言どおりに書いたもの（本体とは独立に実装）
+            const s13 = shanten(hand); // ツモ前の13枚のシャンテン数
             hand[t]++;
             if (code & 1) red[t] = 1;
-            let d = -1, declare = false;
+            const opts = discardOptions(hand, vis); // 14枚から各種類を1枚切った場合
+            let choice = -1, declare = false;
             if (!folded && s13 === 1) {
-              // 受け入れ（ツモ前の13枚）で閾値を選ぶ
-              const h13 = hand.slice(); h13[t]--;
-              let uk = 0;
-              for (let k = 0; k < 34; k++) { if (h13[k] >= 4) continue; h13[k]++; if (shanten(h13) < 1) uk += 4 - vis[k]; h13[k]--; }
-              const th = uk >= model.goodUkeire ? model.pushThresholdGood : model.pushThresholdBad;
-              const opts = discardOptions(hand, vis).filter((o) => o.shanten <= 1);
-              const safest = Math.min(...opts.map((o) => danger(o.kind)));
-              if (safest > th) folded = true;
-              else {
-                const ok = opts.filter((o) => danger(o.kind) <= th);
-                const minS = Math.min(...ok.map((o) => o.shanten));
-                let best = null, bf = true;
-                for (const o of ok.filter((o) => o.shanten === minS)) {
-                  const f = minS === 0 ? (() => { const c = hand.slice(); c[o.kind]--; return waitSet(c).some((k) => river[k] || k === o.kind); })() : true;
-                  if (best === null || (bf && !f) || (bf === f && o.ukeireCount > best.ukeireCount)) { best = o; bf = f; }
-                }
-                d = best.kind;
-                declare = best.shanten === 0;
+              const tenpaiOpts = opts.filter((o) => o.shanten === 0);
+              if (tenpaiOpts.length > 0) {
+                // ツモでテンパイが取れる → 閾値なしでテンパイを取ってリーチ。非フリテン → 待ち枚数 → dealIn 小
+                const furi = (o) => { const c = hand.slice(); c[o.kind]--; return waitSet(c).some((k) => river[k] || k === o.kind) ? 1 : 0; };
+                tenpaiOpts.sort((a, b) => furi(a) - furi(b) || b.ukeireCount - a.ukeireCount || danger(a.kind) - danger(b.kind) || a.kind - b.kind);
+                choice = tenpaiOpts[0].kind;
+                declare = true;
+              } else {
+                // シャンテン数を保つ打牌のうち最も安全なものの dealIn が閾値以下なら押す
+                const h13 = hand.slice(); h13[t]--;
+                const ukeire13 = (() => { let u = 0; for (let k = 0; k < 34; k++) { if (h13[k] >= 4) continue; h13[k]++; if (shanten(h13) === 0) u += 4 - vis[k]; h13[k]--; } return u; })();
+                const th = ukeire13 >= model.goodUkeire ? model.pushThresholdGood : model.pushThresholdBad;
+                const keep = opts.filter((o) => o.shanten === 1);
+                if (Math.min(...keep.map((o) => danger(o.kind))) <= th) {
+                  const ok = keep.filter((o) => danger(o.kind) <= th);
+                  ok.sort((a, b) => b.ukeireCount - a.ukeireCount || a.kind - b.kind);
+                  choice = ok[0].kind;
+                } else folded = true;
               }
             } else folded = true;
-            if (d < 0) {
+            if (choice < 0) {
+              // 降り: dealIn 最小（同率は kind 小）
               let bv = 2;
-              for (let k = 0; k < 34; k++) if (hand[k] > 0 && danger(k) < bv) { bv = danger(k); d = k; }
+              for (let k = 0; k < 34; k++) if (hand[k] > 0 && danger(k) < bv) { bv = danger(k); choice = k; }
             }
-            hand[d]--;
-            if (hand[d] === 0) red[d] = 0;
-            if (discard(d, declare)) break;
+            hand[choice]--;
+            let isRed = 0;
+            if (hand[choice] === 0) { isRed = red[choice]; red[choice] = 0; }
+            if (discard(choice, declare, isRed)) break;
           }
           for (let s = 1; s <= 3 && used < stop; s++) if (other(s, used++)) break;
         }
@@ -247,6 +251,8 @@ function randomOshiState(rng) {
     const rivers = { self: [], shimo: [], toimen: [], kami: [] };
     for (let j = 0; j < nR; j++) for (const key of ["self", "shimo", "toimen", "kami"]) rivers[key].push(kindToStr(pool.shift()));
     const strs = tiles.map(kindToStr);
+    // 手の5を赤にする（赤の扱いも突き合わせる）
+    for (const suit of "mps") { const i = strs.indexOf("5" + suit); if (i >= 0 && rng() < 0.7) strs[i] = "0" + suit; }
     const seat = ["shimo", "toimen", "kami"][Math.floor(rng() * 3)];
     return {
       hand: strs.slice(0, 13), draw: strs[13], doraIndicator: kindToStr(dora), turn: nR + 1, draws: 18 - nR - 1,
@@ -346,6 +352,9 @@ test("answerType の3分類（push / fold / mawashi）", async () => {
   assert.equal(candidateType(cs[1], cs), "mawashi");
   assert.equal(candidateType(cs[2], cs), "fold");
   assert.equal(answerTypeOf(cs), "push");
+  // 優先の fold: best が2シャンテン以上、または和了率 0
+  assert.equal(candidateType({ dealIn: 0.2, shanten: 2, agari: 0.1 }, cs), "fold");
+  assert.equal(candidateType({ dealIn: 0.2, shanten: 1, agari: 0 }, cs), "fold");
   const { createOshiSelector } = await import("../scripts/generate-oshihiki.mjs");
   const sel = createOshiSelector(10); // push 4・fold 4・mawashi 2
   const mk = (t) => ({ ok: true, stat: { answerType: t, genbutsu: false } });
@@ -353,4 +362,35 @@ test("answerType の3分類（push / fold / mawashi）", async () => {
   assert.equal(sel.offer(mk("mawashi")), "mawashiQuota");
   for (let i = 0; i < 4; i++) assert.equal(sel.offer(mk("push")), "ok");
   assert.equal(sel.offer(mk("push")), "pushQuota");
+});
+
+// 定説チェック（閾値 pushThresholdGood/Bad と otherDealInRate はこの局面群で決めた。SPEC §11.4）
+test("定説チェック: 降り・押し・良形/愚形1シャンテン・危険牌の先切り", () => {
+  const rivers = {
+    self: h("9m7z6z9p1s4z3z5z"), shimo: h("1m8m2p9p7p365z"), toimen: h("9p1s2s8m1m453z"), kami: h("8p3m742z1s65z"),
+  };
+  const ev = (hand, draw) => {
+    const st = { hand: h(hand), draw, doraIndicator: "3z", turn: 9, draws: 9, rivers, riichi: { seat: "toimen", index: 6 } };
+    const r = evaluateOshihiki(st, { trials: 6000, seed: 1 });
+    return { r, by: Object.fromEntries(r.candidates.map((c) => [c.tile, c])) };
+  };
+  // 1. 2シャンテン・現物あり → 現物を切って降り
+  const c1 = ev("234m57p34s68s99m1m4z", "8m");
+  assert.equal(c1.r.answerType, "fold");
+  assert.equal(c1.r.candidates[0].dealIn, 0);
+  // 2. 良形テンパイ・無スジ → テンパイを取って押す
+  const c2 = ev("234m567p345s67s11z", "5m");
+  assert.equal(c2.r.answerType, "push");
+  assert.equal(c2.r.candidates[0].shanten, 0);
+  // 3. 愚形1シャンテン（46p 79s）・浮きは無スジ・現物は面子の中 → 降りが勝つ
+  const c3 = ev("123m46p79s456s22z6m", "3s");
+  assert.equal(c3.r.best, "1m");
+  assert.ok(c3.by["1m"].ev > c3.by["9s"].ev && c3.by["1m"].ev > c3.by["6m"].ev);
+  // 4. 良形1シャンテン（23p 67s）・同じ条件 → 無スジを1枚押すのが勝つ
+  const c4 = ev("123m23p67s456s22z6m", "3s");
+  assert.equal(c4.r.answerType, "push");
+  assert.ok(c4.by["6m"].ev > c4.by["1m"].ev);
+  // 5. 危険牌の先切りと現物残し: 無スジ中張（6m）の先切りより、現物（1m）を切って 6m を抱える方が良い
+  const c5 = ev("789m23p67s456s22z6m", "1m");
+  assert.ok(c5.by["1m"].ev > c5.by["6m"].ev);
 });

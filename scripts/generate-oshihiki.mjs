@@ -23,6 +23,7 @@ const FILTER = {
   maxTurn: 13,           // 出題の巡目の上限
   maxShanten: 2,         // 自家の手（最良の打牌後）が3シャンテン以上なら捨てる
   sigma: 3,
+  sigmaSecond: 2,
   genbutsuRatio: 0.8,    // 「現物が手にある問題」は全体のこの割合まで（＝現物なしを2割以上含める）
 };
 const kindOf = (s) => parseTile(s).kind;
@@ -115,6 +116,15 @@ function attempt(a, seed, trials) {
   const rival = c.find((x) => candidateType(x, c) !== answerType);
   if (!rival) return { a, ok: false, reason: "oneType", evaluated: true };
   if (!significant(best.payoff, rival.payoff, trials, FILTER.sigma)) return { a, ok: false, reason: "notSignificant", evaluated: true };
+  // best と次点: 完全に同値か、対応のある差が 2σ 以上
+  if (c.length > 1) {
+    const second = c[1];
+    let same = true;
+    for (let i = 0; i < trials && same; i++) if (best.payoff[i] !== second.payoff[i]) same = false;
+    if (!same && !significant(best.payoff, second.payoff, trials, FILTER.sigmaSecond)) {
+      return { a, ok: false, reason: "secondNotSignificant", evaluated: true };
+    }
+  }
   const fold1 = c.reduce((m, x) => (x.dealIn < m.dealIn ? x : m), c[0]); // ベタオリの第一打（統計用）
 
   const candidates = c.map((x) => toOshihikiCandidateJson(x, trials));
@@ -263,7 +273,7 @@ async function main() {
   console.log("answerType:", hist(st.map((s) => s.answerType)), " 現物あり:", st.filter((s) => s.genbutsu).length);
   console.log("巡目分布:", hist(st.map((s) => s.turn)), " best のシャンテン:", hist(st.map((s) => s.shanten)));
   console.log(`best の ev: 最小 ${pct(evs, 0)} / 10% ${pct(evs, 0.1)} / 中央 ${pct(evs, 0.5)} / 90% ${pct(evs, 0.9)} / 最大 ${pct(evs, 1)}`);
-  console.log(`best と次点の損失: 中央 ${pct(lossS, 0.5).toFixed(0)} / 90% ${pct(lossS, 0.9).toFixed(0)} / 最大 ${pct(lossS, 1).toFixed(0)}`);
+  console.log(`best と次点の損失: 中央 ${pct(lossS, 0.5).toFixed(0)} / 75% ${pct(lossS, 0.75).toFixed(0)} / 90% ${pct(lossS, 0.9).toFixed(0)} / 最大 ${pct(lossS, 1).toFixed(0)}（同値 ${lossS.filter((x) => x === 0).length} 件）`);
   console.log(`best とベタオリ第一打の損失（best≠第一打のとき）: 件数 ${lossF.length} / 中央 ${pct(lossF, 0.5)?.toFixed?.(0)} / 90% ${pct(lossF, 0.9)?.toFixed?.(0)}`);
   console.log(`best と反対の型の最良候補の損失（有意差の対象）: 中央 ${pct(lossR, 0.5).toFixed(0)} / 90% ${pct(lossR, 0.9).toFixed(0)}`);
   console.log(`全候補の損失: 25% ${pct(lossAll, 0.25).toFixed(0)} / 中央 ${pct(lossAll, 0.5).toFixed(0)} / 75% ${pct(lossAll, 0.75).toFixed(0)} / 90% ${pct(lossAll, 0.9).toFixed(0)}（${lossAll.length} 件）`);
