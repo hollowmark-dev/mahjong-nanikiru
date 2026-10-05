@@ -356,7 +356,7 @@ test("answerType の3分類（push / fold / mawashi）", async () => {
   assert.equal(candidateType({ dealIn: 0.2, shanten: 2, agari: 0.1 }, cs), "fold");
   assert.equal(candidateType({ dealIn: 0.2, shanten: 1, agari: 0 }, cs), "fold");
   const { createOshiSelector } = await import("../scripts/generate-oshihiki.mjs");
-  const sel = createOshiSelector(10); // push 4・fold 4・mawashi 2
+  const sel = createOshiSelector(10, { push: 0.4, fold: 0.4, mawashi: 0.2 }); // push 4・fold 4・mawashi 2
   const mk = (t) => ({ ok: true, stat: { answerType: t, genbutsu: false } });
   for (let i = 0; i < 2; i++) assert.equal(sel.offer(mk("mawashi")), "ok");
   assert.equal(sel.offer(mk("mawashi")), "mawashiQuota");

@@ -96,7 +96,8 @@ function significant(a, b, trials, sigma) {
   return mean > 0 && mean >= sigma * se;
 }
 
-function attempt(a, seed, trials) {
+// genbutsuFull: 先頭部分で「現物あり」の枠が埋まっている（評価しても必ず捨てるので、現物ありなら評価を省く）
+function attempt(a, seed, trials, genbutsuFull = false) {
   const pos = makeOshiPosition(hashString(`${seed}:opos:${a}`));
   if (!pos) return { a, ok: false, reason: "noPosition" };
   const counts14 = new Array(34).fill(0);
@@ -107,6 +108,10 @@ function attempt(a, seed, trials) {
   for (const key of SEATS) for (const t of pos.rivers[key]) visible[kindOf(t)]++;
   const minS = Math.min(...discardOptions(counts14, visible).map((o) => o.shanten));
   if (minS > FILTER.maxShanten) return { a, ok: false, reason: "shanten" };
+  // 2シャンテン以上の手は、どの候補もシャンテン ≥ 2 で fold に分類され、型の比較ができない（oneType 確定）
+  if (minS >= 2) return { a, ok: false, reason: "oneType" };
+  const riichiRiver0 = pos.rivers[pos.riichi.seat].map(kindOf);
+  if (genbutsuFull && [...pos.hand, pos.draw].some((s) => riichiRiver0.includes(kindOf(s)))) return { a, ok: false, reason: "genbutsuQuota" };
 
   const raw = evaluateOshihikiRaw(pos, { trials, seed: hashString(`${seed}:oeval:${a}`) });
   const c = raw.candidates;
@@ -145,11 +150,27 @@ function attempt(a, seed, trials) {
   };
 }
 
-// 採用順に枠を判定: push 40%・fold 40%・mawashi 20%（端数は push・fold へ）、現物ありの問題は genbutsuRatio まで
-export function createOshiSelector(count) {
-  const m = Math.floor(count * 0.2);
-  const p = Math.ceil((count - m) / 2);
-  const quota = { push: p, fold: count - m - p, mawashi: m };
+// 型ごとの枠の割合（端数は push → fold → mawashi の順に足す）。§11.5
+export const DEFAULT_QUOTA = { push: 0.45, fold: 0.15, mawashi: 0.4 }; // 自然比率（push 49%・mawashi 38%・fold 13%）に寄せた
+
+// "push=0.3,fold=0.5,mawashi=0.2" または "none"（枠なし＝自然比率の測定用）
+export function parseQuota(str) {
+  if (!str) return DEFAULT_QUOTA;
+  if (str === "none") return null;
+  const q = {};
+  for (const part of str.split(",")) { const [k, v] = part.split("="); q[k.trim()] = Number(v); }
+  return q;
+}
+
+// 採用順に枠を判定: 型ごとの枠、現物ありの問題は genbutsuRatio まで
+export function createOshiSelector(count, ratio = DEFAULT_QUOTA) {
+  const types = ["push", "fold", "mawashi"];
+  const quota = {};
+  if (ratio) {
+    let rest = count;
+    for (const t of types) { quota[t] = Math.floor(count * (ratio[t] || 0)); rest -= quota[t]; }
+    for (let i = 0; rest > 0; i++, rest--) quota[types[i % 3]]++;
+  } else for (const t of types) quota[t] = count;
   const used = { push: 0, fold: 0, mawashi: 0 };
   const gMax = Math.floor(count * FILTER.genbutsuRatio);
   let g = 0;
@@ -163,6 +184,7 @@ export function createOshiSelector(count) {
       if (r.stat.genbutsu) g++;
       return "ok";
     },
+    quota, used, get genbutsu() { return g; }, get genbutsuFull() { return g >= gMax; },
   };
 }
 
@@ -171,13 +193,13 @@ if (!isMainThread && workerData && workerData.script === "generate-oshihiki") {
   const { seed, trials } = workerData;
   parentPort.on("message", (msg) => {
     if (msg === null) process.exit(0);
-    parentPort.postMessage(msg.batch.map((a) => attempt(a, seed, trials)));
+    parentPort.postMessage(msg.batch.map((a) => attempt(a, seed, trials, msg.genbutsuFull)));
   });
 }
 
 // ---------------- main ----------------
 function parseArgs(argv) {
-  const o = { count: 1000, trials: 10000, seed: 12345, out: "docs/data/problems-oshihiki.json", threads: availableParallelism(), "generated-at": "" };
+  const o = { count: 1000, trials: 10000, seed: 12345, out: "docs/data/problems-oshihiki.json", threads: availableParallelism(), "generated-at": "", quota: "" };
   for (let i = 0; i < argv.length; i++) {
     const k = argv[i].replace(/^--/, "");
     const v = argv[i + 1];
@@ -202,7 +224,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const t0 = Date.now();
   const results = new Map();
-  const selector = createOshiSelector(args.count);
+  const selector = createOshiSelector(args.count, parseQuota(args.quota));
   const accepted = [];
   const reasons = {};
   let nextA = 0, prefix = 0, done = false, active = 0, lastLog = 0, evaluated = 0;
@@ -226,7 +248,7 @@ async function main() {
     const batch = [];
     for (let i = 0; i < BATCH; i++) batch.push(nextA++);
     active++;
-    w.postMessage({ batch });
+    w.postMessage({ batch, genbutsuFull: selector.genbutsuFull });
   }
   const self = fileURLToPath(import.meta.url);
   for (let i = 0; i < args.threads; i++) {
@@ -238,7 +260,10 @@ async function main() {
       const now = Date.now();
       if (now - lastLog > 10000) {
         lastLog = now;
-        process.stderr.write(`  進捗: 採用 ${accepted.length}/${args.count}（試行 ${prefix} 件、${((now - t0) / 1000).toFixed(0)} 秒）\n`);
+        const u = selector.used, q = selector.quota;
+        const rs = Object.entries(reasons).map(([k, v]) => `${k} ${v}`).join(" / ");
+        process.stderr.write(`  進捗: 採用 ${accepted.length}/${args.count}（試行 ${prefix} 件・評価 ${evaluated} 件、${((now - t0) / 1000).toFixed(0)} 秒）` +
+          ` push ${u.push}/${q.push} fold ${u.fold}/${q.fold} mawashi ${u.mawashi}/${q.mawashi} 現物あり ${selector.genbutsu}｜不採用: ${rs}\n`);
       }
       dispatch(w);
       if (done && active === 0) finishResolve();
@@ -253,7 +278,7 @@ async function main() {
     version: 1,
     kind: "oshihiki",
     generatedAt: args["generated-at"] || jstIso(),
-    params: { trials: args.trials, maxTurn: MAX_TURN, seed: args.seed, model: "oshihiki-v1", ...OSHIHIKI_MODEL },
+    params: { trials: args.trials, maxTurn: MAX_TURN, seed: args.seed, model: "oshihiki-v1", ...OSHIHIKI_MODEL, quota: parseQuota(args.quota) },
     problems,
   };
   const outPath = resolve(args.out);
