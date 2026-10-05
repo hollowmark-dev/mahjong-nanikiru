@@ -158,6 +158,7 @@ const jsonRes = (obj, ok = true, status = 200) => ({ ok, status, json: async () 
 
 test("ranking: 無効時は何も送らない", async () => {
   const r = await freshRanking();
+  r.configureRanking({ endpoint: "" }); // config.js の URL に依存しないよう明示的に無効化
   let called = false;
   globalThis.fetch = async () => { called = true; };
   assert.equal(r.isRankingEnabled(), false);
