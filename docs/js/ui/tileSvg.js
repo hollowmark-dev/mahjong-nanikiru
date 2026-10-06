@@ -42,6 +42,40 @@ function bar(cx, cy, w, h, color) {
     `<rect x="${x + w * 0.2}" y="${y + 1.5}" width="${(w * 0.18).toFixed(2)}" height="${h - 3}" fill="#fff" opacity="0.25"/>`;
 }
 
+// 八索の絵柄（遊ぶ人が選べる）。どれも棒8本。
+export const SOU8_STYLES = [
+  { id: "mw", label: "実物風（M・W）" },
+  { id: "x", label: "X字" },
+  { id: "straight", label: "縦並び" },
+];
+let sou8Style = "mw";
+export function setSou8Style(id) {
+  if (SOU8_STYLES.some((s) => s.id === id)) sou8Style = id;
+}
+export function getSou8Style() {
+  return sou8Style;
+}
+
+// 傾けた棒（deg は時計回り）
+function tiltedBar(cx, cy, w, h, color, deg) {
+  return `<g transform="rotate(${deg} ${cx} ${cy})">${bar(cx, cy, w, h, color)}</g>`;
+}
+
+function sou8Face(c) {
+  if (sou8Style === "straight") {
+    return [8.5, 16.5, 23.5, 31.5].map((x, i) => {
+      const k = i % 3 === 0 ? "g" : "b";
+      return bar(x, 17, 5.5, 17, c(k)) + bar(x, 39, 5.5, 17, c(k));
+    }).join("");
+  }
+  // 外側は縦、内側の2本を傾ける。mw: 上段 ∧・下段 ∨（実物の八索）。x: 上段 ∨・下段 ∧
+  const t = sou8Style === "mw" ? 1 : -1;
+  return bar(7.5, 17, 5.5, 18, c("g")) + bar(32.5, 17, 5.5, 18, c("g")) +
+    tiltedBar(15.5, 17.5, 5.5, 18, c("b"), 20 * t) + tiltedBar(24.5, 17.5, 5.5, 18, c("b"), -20 * t) +
+    bar(7.5, 39, 5.5, 18, c("g")) + bar(32.5, 39, 5.5, 18, c("g")) +
+    tiltedBar(15.5, 38.5, 5.5, 18, c("b"), -20 * t) + tiltedBar(24.5, 38.5, 5.5, 18, c("b"), 20 * t);
+}
+
 // 索子: [cx, cy, 色]（bar の大きさは別途）
 function souFace(n, red) {
   const c = (k) => (red ? RED : COLOR[k]);
@@ -62,7 +96,7 @@ function souFace(n, red) {
     case 5: [[11, 15], [29, 15], [11, 41], [29, 41]].forEach(([x, y]) => add(x, y, 6, 15, "g")); add(20, 28, 6, 15, "r"); break;
     case 6: [10, 20, 30].forEach((x, i) => { add(x, 17, 6, 16, i === 1 ? "b" : "g"); add(x, 39, 6, 16, i === 1 ? "b" : "g"); }); break;
     case 7: add(20, 10, 6, 12, "r"); [10, 20, 30].forEach((x) => { add(x, 26, 6, 14, "g"); add(x, 42, 6, 14, "g"); }); break;
-    case 8: [8.5, 16.5, 23.5, 31.5].forEach((x, i) => { add(x, 17, 5.5, 17, i % 3 === 0 ? "g" : "b"); add(x, 39, 5.5, 17, i % 3 === 0 ? "g" : "b"); }); break;
+    case 8: return sou8Face(c);
     case 9: [10, 20, 30].forEach((x, i) => [12, 28, 44].forEach((y) => add(x, y, 6, 13, i === 1 ? "r" : i === 0 ? "g" : "b"))); break;
   }
   return out.join("");

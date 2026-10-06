@@ -10,6 +10,7 @@ import { jstDateString, pickDailyMixed, pickPractice, addDays } from "./game/dai
 import { createSession, currentProblem, recordAnswer, toRecord, isFinished, DAILY_LIMIT_MS } from "./game/session.js";
 import { startProgress, isPlaying, isComplete, markShowing, resolveInterrupted, finalize, problemsOf, decideStart } from "./game/progress.js";
 import * as storage from "./game/storage.js";
+import { setSou8Style } from "./ui/tileSvg.js";
 
 const root = document.getElementById("app");
 const status = document.getElementById("sr-status");
@@ -141,6 +142,7 @@ async function loadJson(url) {
 }
 
 async function boot() {
+  setSou8Style(storage.getSou8Style()); // 保存された八索の絵柄（未保存なら既定のまま）
   // 2ファイルを並列に取得する
   const [speedRes, oshiRes] = await Promise.allSettled([
     loadJson("data/problems.json"),

@@ -1,5 +1,6 @@
 // ホーム画面
-import { h, mount } from "./dom.js";
+import { h, mount, tileNode } from "./dom.js";
+import { SOU8_STYLES, getSou8Style, setSou8Style } from "./tileSvg.js";
 import * as ranking from "../ranking.js";
 import * as storage from "../game/storage.js";
 import { shortDate, addDays } from "../game/daily.js";
@@ -86,6 +87,24 @@ export function renderHome(root, ctx) {
       h("button", { type: "button", class: "btn", onclick: () => startPractice("practice_oshi") }, "押し引きを練習")),
   );
 
+  // 牌のデザイン（八索の絵柄を選ぶ）
+  const curSou8 = getSou8Style();
+  const sou8Choices = SOU8_STYLES.map((st) => {
+    const id = `sou8-${st.id}`;
+    const r = h("input", { type: "radio", name: "sou8", id, value: st.id, checked: st.id === curSou8 });
+    r.addEventListener("change", () => { setSou8Style(st.id); storage.setSou8Style(st.id); });
+    // 見本は選択肢ごとの絵柄で描く（描いたあと現在の設定に戻す）
+    setSou8Style(st.id);
+    const sample = tileNode("8s");
+    setSou8Style(curSou8);
+    return h("label", { class: "chip tile-choice", for: id }, r, sample, h("span", {}, st.label));
+  });
+  const design = h("details", { class: "card how" },
+    h("summary", {}, "牌のデザイン"),
+    h("p", { class: "note" }, "八索（パーソウ）の絵柄を選べます。"),
+    h("div", { class: "chips", role: "radiogroup", "aria-label": "八索の絵柄" }, sou8Choices),
+  );
+
   const how = h("details", { class: "card how" },
     h("summary", {}, "遊び方"),
     h("ul", {},
@@ -115,6 +134,7 @@ export function renderHome(root, ctx) {
       ? h("section", { class: "card" }, h("div", { class: "actions" },
         h("button", { type: "button", class: "btn", onclick: () => ctx.go("ranking") }, "ランキングを見る")))
       : null,
+    design,
     how,
   );
 }

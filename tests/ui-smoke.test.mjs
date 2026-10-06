@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { tileSvg } from "../docs/js/ui/tileSvg.js";
+import { tileSvg, SOU8_STYLES, setSou8Style, getSou8Style } from "../docs/js/ui/tileSvg.js";
 import { kindToStr, parseTile, sortTiles } from "../docs/js/engine/tiles.js";
 import { scoreAnswer } from "../docs/js/game/scoring.js";
 
@@ -48,6 +48,18 @@ test("筒子の円の数は n（1筒は同心円5つ、2〜9筒は1つにつき3
 test("索子の棒の数は n（棒1本は rect 3枚、牌の枠が rect 2枚）", () => {
   for (let n = 2; n <= 9; n++) assert.equal(count(tileSvg(`${n}s`), /<rect/g), 2 + 3 * n, `${n}s`);
   assert.match(tileSvg("1s"), /<ellipse/); // 1索は鳥
+});
+
+test("八索はどの絵柄でも棒8本、実物風とX字は内側を傾ける", () => {
+  const before = getSou8Style();
+  for (const { id } of SOU8_STYLES) {
+    setSou8Style(id);
+    assert.equal(count(tileSvg("8s"), /<rect/g), 2 + 3 * 8, id);
+    assert.equal(count(tileSvg("8s"), /rotate\(/g), id === "straight" ? 0 : 4, id);
+  }
+  setSou8Style("unknown"); // 不正な id は無視
+  assert.equal(getSou8Style(), "straight");
+  setSou8Style(before);
 });
 
 test("萬子は漢数字＋萬、字牌は漢字、三元牌の色", () => {

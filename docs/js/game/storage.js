@@ -49,3 +49,11 @@ export function loadDaily(date) {
 export function saveDaily(record) {
   return set("daily." + record.date, JSON.stringify(record));
 }
+
+// 八索の絵柄（ui/tileSvg.js の SOU8_STYLES の id）
+export function getSou8Style() {
+  return get("sou8") || "";
+}
+export function setSou8Style(id) {
+  set("sou8", id);
+}
